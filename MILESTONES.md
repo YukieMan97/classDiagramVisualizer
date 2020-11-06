@@ -1,5 +1,6 @@
 Add entries to this file summarising each project milestone. Don't forget that these need to have been discussed with your TA before the milestone deadline; also, remember to commit and push them by then!
 
+## Milestone 1
 Idea Description: 
 - Idea: A tool that creates UML/Class diagrams to show Class Coupling of a Java project
 - Visualization: We can use a webpage to showcase diagrams or solely create UML/Class diagrams for highlighting classes that are coupled with corresponding colours.
@@ -15,3 +16,23 @@ Follow Up Tasks & Features:
 - Figure out how to show coupling and create the diagrams in an efficient/organized manner
 - We can take into account of how the diagrams will be colour-coded. For example, if the programmer wants to only look at the coupling of a specific class, this class and its coupled classes will be highlighted in one colour while the rest will greyed out/less visible. That way, the area that the programmer is currently focusing on stands out from the rest.
 - Meet up next week to discuss roles and more details on our plans
+
+## Milestone 2 
+Planned division of main responsibilities:
+1. Visualization: Yukie + Wewic 
+2. Program Analysis: Avi + Jeremey (majority) & Yukie + Wewic (assuming visualization is simple enough)
+
+Roadmap:
+- Before Milestone 3 (Nov 13): create language design, find user studies and record their responses, think about how to integrate our language design with visualization
+- Before Milestone 4 (Nov 20): complete majority of implementation, find more users for final user study
+- Before Project Due Date (Nov 30): once implementation is done, meaning our program is working as planned as integrated with the visualization, we will send it out for final user study a few days prior the due date. Then, take in feedback and improve implementation.
+
+Summary of progress so far:
+- Met up with TA to come with a unique idea from Class Coupling idea
+- We went through 3 new ideas (memory optimizaiton, runtime analysis, poor programming practices/code smells)
+- some feedback about the 3 new ideas:
+1. Memory optimizaiton: finding ASTs might be difficult for C/C++, need to find a middle ground between dynamic and static analysis
+2. Runtime analysis: Add more performance-based aspects such as # times methods are called and donsider what data is being passed
+3. Poor programming practices/code smells: almost like a linter but linter looks at formatting, not at what the code does, so focus on that more.
+- Conclusion: integrate one or more of these ideas to Class Coupling to make it more unique. An example would be ... "what kind of programming practices are found within UML classes?". 
+- Need to meet up with team next week to discuss this idea in full and complete milestone 3 tasks
