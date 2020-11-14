@@ -36,3 +36,13 @@ Summary of progress so far:
 3. Poor programming practices/code smells: almost like a linter but linter looks at formatting, not at what the code does, so focus on that more.
 - Conclusion: integrate one or more of these ideas to Class Coupling to make it more unique. An example would be ... "what kind of programming practices are found within UML classes?". 
 - Need to meet up with team next week to discuss this idea in full and complete milestone 3 tasks
+
+## Milestone 3
+Mockup of analysis design:
+- Our program design is to analyze code where we can split up classes (class coupling) and also detect structural design patterns such as composite design pattern. Since Structural Design Patterns provides a simple  way to realize relationships between entities, it would be great to merge this concept and class coupling.  We know we have to look for sequence of calls to determine design patterns. As for class coupling, we will determine which classes uses extends, interfaces, etc.
+Mockup of visualisation: 
+- UML diagrams is our still base idea for visualization as mentioned in Milestone 1. However, we will need to brainstorm more ideas to make our visualizaiton completely unique, so that is doesn't look like a UML diagram at first glance. 
+Notes about first user study: 
+- User study #1: finds that the visualization aspect will be useful for programmers who are unfamiliar with a new project, believes that it is a good idea to "determine which classes uses extends, interfaces, etc" to detect class coupling, and seems very abstract at the moment so it is kind of confusing
+Any changes to original analysis/visualisation design: 
+- will need to consider if we want to keep the "detect structural design patterns" aspect in our program because this would be difficult to analyze/find in given code
