@@ -9,7 +9,7 @@ public class testFileNavigator {
         System.out.println("Starting");
         FileNavigator fn = new FileNavigator();
         ArrayList<String> test = new ArrayList<>();
-        fn.getPaths("~/Documents/CPSC210/IdeaProjects/cpsc410_project2_team14", test);
+        fn.getPaths("/Users/lyncolnsellors/Documents/CPSC210/IdeaProjects/cpsc410_project2_team14", test);
         for (String s : test) {
             System.out.println(s);
         }
