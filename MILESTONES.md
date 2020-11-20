@@ -74,9 +74,11 @@ Any changes to original analysis/visualisation design:
 ## Milestone 4
 Status of implementation:
 - Jeremy got the Java parser working, however Avi thinks Java Swing might be difficult to use for our visualization aspect. So we will need to discuss what language our implementation will be in. 
+
 Plans for final user study:
 - contact previous users and new users to test our program
 - receive feedback and make changes to our implementation if required
+
 Planned timeline for the remaining days:
 - Before Nov 25th: Complete implementation before Nov 25th with some tests
 - Nov 25th: Complete final user study
