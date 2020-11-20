@@ -1,3 +1,5 @@
+import com.github.javaparser.JavaParser;
+
 import java.util.ArrayList;
 
 public class Main {
@@ -6,6 +8,8 @@ public class Main {
         FileNavigator FN = new FileNavigator();
         ArrayList<String> paths = new ArrayList<String>();
         FN.getPaths(args[0], paths);
+        JavaParser javaParser = new JavaParser();
+
 
     }
 }

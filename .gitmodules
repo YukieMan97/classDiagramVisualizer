@@ -1,0 +1,3 @@
+[submodule "library/javaparser"]
+	path = library/javaparser
+	url = https://github.com/raphaelcohn/intellij-library-javaparser.git
