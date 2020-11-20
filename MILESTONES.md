@@ -38,14 +38,22 @@ Summary of progress so far:
 - Need to meet up with team next week to discuss this idea in full and complete milestone 3 tasks
 
 ## Milestone 3
-Mockup of analysis design:
-- Our program design is to analyze code where we can split up classes (class coupling) and also detect structural design patterns such as composite design pattern. Since Structural Design Patterns provides a simple  way to realize relationships between entities, it would be great to merge this concept and class coupling.  We know we have to look for sequence of calls to determine design patterns. As for class coupling, we will determine which classes uses extends, interfaces, etc.
+Mockup of analysis design/visualization:
+![visual1](https://i.gyazo.com/72786cbc795c9011b9b8d96e49b73cfc.png)
+- Each class will be represented by a circle of a unique color whose size will be proportional to the size of the class (number of fields and methods).
+- The class name will also be displayed within the circle
+- Fields will be represented by shapes inside of the class circle, and methods will be shapes outside of the class circle attached by solid lines. 
+- The shape of the field or method can be used to convey useful information such as visibility modifiers (private and public).
 
-Mockup of visualisation: 
-- UML diagrams is our still base idea for visualization as mentioned in Milestone 1. However, we will need to brainstorm more ideas to make our visualizaiton completely unique, so that is doesn't look like a UML diagram at first glance. 
+![visual2](https://i.gyazo.com/0bd09175d85c59b3eeedacfab5bb6938.png)
+- Interactive aspect: The user will be able to click on a class to highlight all classes, fields and methods that depend on it (Image 1).
+- Alternatively, the user will also be able to click on a method of any class to highlight classes on which that particular method depends, methods from other classes that call or are called by that given method, and finally fields within its own class that the method uses.
+
 
 Notes about first user study: 
-- User study #1: finds that the visualization aspect will be useful for programmers who are unfamiliar with a new project, believes that it is a good idea to "determine which classes uses extends, interfaces, etc" to detect class coupling, and seems very abstract at the moment so it is kind of confusing
+- User study #1: 
+- User study #2: 
+- User study #3: 
 
 Any changes to original analysis/visualisation design: 
-- will need to consider if we want to keep the "detect structural design patterns" aspect in our program because this would be difficult to analyze/find in given code
+
