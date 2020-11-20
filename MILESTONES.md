@@ -70,3 +70,15 @@ Sry if I can't provide any further information on this as that's pretty much the
 
 Any changes to original analysis/visualisation design: 
 - things to consider: colour representation if project is very large, display # of classes/methods/fields/etc., visualize stats/data about program (ex. # lines of code in each class).
+
+## Milestone 4
+Status of implementation:
+- Jeremy got the Java parser working, however Avi thinks Java Swing might be difficult to use for our visualization aspect. So we will need to discuss what language our implementation will be in. 
+Plans for final user study:
+- contact previous users and new users to test our program
+- receive feedback and make changes to our implementation if required
+Planned timeline for the remaining days:
+- Before Nov 25th: Complete implementation before Nov 25th with some tests
+- Nov 25th: Complete final user study
+- Nov 25th-26th: Make changes according to final user study feedback
+- Nov 26th-30th: Test our implementation more and make the according fixes
