@@ -51,14 +51,14 @@ Mockup of analysis design/visualization:
 
 
 Notes about first user study: 
-- User study #1: 
+- User study #1 (CS College Student): 
 1. I think the project makes a lot of sense, it looks really fun and interesting tbh
 
 2. Maybe as a stretch goal, you have also output a written report containing statistics or data about the visualization. For example, maybe how many lines of code are in each class or how many methods or fields are in each class. Also, Is there a chance you'll run out of  colors for the visualization? That's a concern theoretically if the program is big and then some colors might look really similiar.
 
 3. I think the project is a great way to learn OOP and Java, I like it! (although I dislike working with Java)
 
-- User study #2:
+- User study #2 (Gr. 12 applying for CS Program):
 1. I'd say the concept of the whole project does seem to make sense, the idea of being able to see what classes/attributes are associated with each other is rly useful. I don't think I have enough knowledge to comment on any problems I'd foresee with the implementation but based on stuff IDEs can do I think that wouldn't be a problem. Also I think a graphical visualization like this is much better than the way an IDE provides information :D
 
 2. I think maybe adding the number of fields and methods each class has next to the name when displaying it would be somewhat useful, especially if larger classes have a lot of stuff associated with it and just trying to count the number of shapes gets a bit confusing since (this is just for me tho idk about for others) I tend to lose track of counting small things like this
@@ -69,4 +69,4 @@ Sry if I can't provide any further information on this as that's pretty much the
 - User study #3: 
 
 Any changes to original analysis/visualisation design: 
-
+- things to consider: colour representation if project is very large, display # of classes/methods/fields/etc., visualize stats/data about program (ex. # lines of code in each class).
