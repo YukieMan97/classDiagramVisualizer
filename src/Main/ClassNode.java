@@ -1,26 +1,27 @@
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class ClassNode {
 
-    private ArrayList<String> classesUsedAsFields;
-    private ArrayList<String> parentClassList;
-    private ArrayList<String> parentInterfaceList;
-    private ArrayList<String> classesReturnedByMethods;
-    private ArrayList<String> classesUsedAsLocalVariables;
-    private ArrayList<String> classesUsedAsArguments;
+    private Hashtable<String,String>  classesUsedAsFields;
+    private ArrayList <String> parentClassList;
+    private ArrayList <String>  parentInterfaceList;
+    private Hashtable <String,String>  classesReturnedByMethods;
+    private Hashtable <String,String> classesUsedAsLocalVariables;
+    private Hashtable <String,String>classesUsedAsArguments;
     private String name;
 
     public ClassNode(String name) {
         this.name = name;
-        this.classesReturnedByMethods = new ArrayList<String>();
-        this.classesUsedAsArguments = new ArrayList<String>();
-        this.classesUsedAsFields = new ArrayList<String>();
-        this.classesUsedAsLocalVariables = new ArrayList<String>();
+        this.classesReturnedByMethods = new Hashtable<>();
+        this.classesUsedAsArguments = new Hashtable<>();
+        this.classesUsedAsFields = new Hashtable<>();
+        this.classesUsedAsLocalVariables = new Hashtable<>();
         this.parentClassList = new ArrayList<String>();
         this.parentInterfaceList = new ArrayList<String>();
     }
 
-    public ArrayList<String> getClassesUsedAsFields() {
+    public Hashtable<String, String> getClassesUsedAsFields() {
         return this.classesUsedAsFields;
     }
 
@@ -32,32 +33,32 @@ public class ClassNode {
         return this.parentInterfaceList;
     }
 
-    public ArrayList<String> getClassesReturnedByMethodsList() {
+    public Hashtable<String, String>  getClassesReturnedByMethodsList() {
         return this.classesReturnedByMethods;
     }
 
-    public ArrayList<String> getClassesUsedAsLocalVariables() {
+    public Hashtable<String, String>  getClassesUsedAsLocalVariables() {
         return this.classesUsedAsLocalVariables;
     }
 
-    public ArrayList<String> getClassesUsedAsArguments() {
+    public Hashtable<String, String>  getClassesUsedAsArguments() {
         return this.classesUsedAsArguments;
     }
 
-    public void addToClassesUsedAsFields(String className) {
-        this.classesUsedAsFields.add(className);
+    public void addToClassesUsedAsFields(String className, String fieldName) {
+        this.classesUsedAsFields.put(className, fieldName);
     }
 
-    public void addToClassesUsedAsArguments(String className) {
-        this.classesUsedAsArguments.add(className);
+    public void addToClassesUsedAsArguments(String className, String methodName) {
+        this.classesUsedAsArguments.put(className, methodName);
     }
 
-    public void addToClassesUsedAsLocalVariables(String className) {
-        this.classesUsedAsLocalVariables.add(className);
+    public void addToClassesUsedAsLocalVariables(String className, String methodName) {
+        this.classesUsedAsLocalVariables.put(className, methodName);
     }
 
-    public void addToClassesReturnedByMethods(String className) {
-        this.classesReturnedByMethods.add(className);
+    public void addToClassesReturnedByMethods(String className, String methodName) {
+        this.classesReturnedByMethods.put(className, methodName);
     }
 
     public void addToParentClasses(String className) {

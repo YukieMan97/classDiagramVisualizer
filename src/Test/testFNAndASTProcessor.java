@@ -2,7 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-public class testFileNavigator {
+public class testFNAndASTProcessor {
 
     @Test
     public void testFileNavigatorSimple() {
@@ -14,6 +14,8 @@ public class testFileNavigator {
             System.out.println(s);
         }
         System.out.println("Done");
+        ASTProcessor astp = new ASTProcessor();
+        astp.process(test);
     }
 
 }
