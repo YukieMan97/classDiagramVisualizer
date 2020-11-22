@@ -6,6 +6,10 @@ public class Main {
         FileNavigator FN = new FileNavigator();
         ArrayList<String> paths = new ArrayList<String>();
         FN.getPaths(args[0], paths);
+        ASTProcessor astp = new ASTProcessor();
+        astp.process(paths);
+
+
 
     }
 }
