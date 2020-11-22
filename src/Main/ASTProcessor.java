@@ -1,11 +1,13 @@
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
@@ -13,14 +15,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Optional;
 
 public class ASTProcessor {
-    private Hashtable<String, ClassRepresentation> nodes;
+    private Hashtable<String, ClassRepresentation> representations;
     private ClassRepresentation curNode;
     private ArrayList<CompilationUnit> classTrees;
 
     public ASTProcessor() {
-        nodes = new Hashtable<String, ClassRepresentation>();
+        representations = new Hashtable<String, ClassRepresentation>();
         classTrees = new ArrayList<CompilationUnit>();
     }
 
@@ -43,7 +46,7 @@ public class ASTProcessor {
              VoidVisitor<Hashtable<String, ClassRepresentation>> namer = new ClassNodeNamer();
              ArrayList<CompilationUnit> classTrees = new ArrayList<CompilationUnit>();
              for (CompilationUnit cu: cus) {
-                 namer.visit(cu, nodes);
+                 namer.visit(cu, representations);
              }
              for (CompilationUnit cu: cus) {
                  processCompilationUnit(cu);
@@ -56,6 +59,8 @@ public class ASTProcessor {
     }
 
     private void processCompilationUnit(CompilationUnit cu) {
+        MethodProcessor mp = new MethodProcessor();
+        mp.visit(cu, null);
 
     }
 
@@ -78,79 +83,51 @@ public class ASTProcessor {
         }
     }
 
-    private class MethodProcessor extends VoidVisitorAdapter<ClassRepresentation> {
+    private class MethodProcessor extends VoidVisitorAdapter<Void> {
+        private String curMethodName;
+
         @Override
-        public void visit(MethodDeclaration md, ClassRepresentation cn) {
-            super.visit(md, cn);
-            String name = md.getNameAsString();
-            //ClassOrInterfaceDeclaration parentNode = md.getParentNode();
-            Type type = md.getType();
-            NodeList<Parameter> parameters  = md.getParameters();
-            if (nodes.containsKey(type)) {
-
-            }
-
-        }
-    }
-
-   /* public ArrayList<ClassNode> makeNodesFromCompilationUnits(ArrayList<CompilationUnit> cus) {
-        ArrayList<ClassNode> result = new ArrayList<ClassNode>();
-        for (CompilationUnit cu : cus) {
-            makeClassNode(cu);
-        }
-        return new ArrayList<ClassNode>();
-    }
-
-    public void makeClassNode(CompilationUnit cu) {
-        List<Node> children = cu.getChildNodes();
-        for (Node n : children) {
-            if (n instanceof ClassOrInterfaceDeclaration) {
-                processClass((ClassOrInterfaceDeclaration) n);
-            }
-        }
-*/
-
-   // }
-
-    /*private void processClass(ClassOrInterfaceDeclaration n) {
-        curNode = new ClassNode (n.getNameAsString());
-        NodeList<ClassOrInterfaceType> exts = n.getExtendedTypes();
-        NodeList<ClassOrInterfaceType> impls = n.getImplementedTypes();
-        for (ClassOrInterfaceType e: exts) {
-            curNode.addToParentClasses(e.getNameAsString());
-        }
-        for (ClassOrInterfaceType i: impls) {
-            curNode.addToParentInterfaceList(i.getNameAsString());
-        }
-        List<Node> children = n.getChildNodes();
-        for (Node c : children) {
-            if (c instanceof FieldDeclaration) {
-                processField((FieldDeclaration) c);
-            } else if (c instanceof MethodDeclaration) {
-                processMethod((MethodDeclaration) c);
-            }
-        }
-        nodes.put(n.getNameAsString(), curNode);
-    }
-
-    private void processMethod(MethodDeclaration c) {
-    }
-
-    private void processField(FieldDeclaration n) {
-    }
-
-    private class methodDeclarationAdaptor extends VoidVisitorAdapter<Void> {
-        @Override public void visit(MethodDeclaration md, Void arg) {
+        public void visit(MethodDeclaration md, Void arg) {
             super.visit(md, arg);
-            NodeList<Parameter> parameters =  md.getParameters();
-            if (nodes.contains md.getTypeAsString())
+            String name = md.getNameAsString();
+            curMethodName = name;
+            Optional<Node> parentNode = md.getParentNode();
+            Node parent = parentNode.get();
+            String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
+            String type = md.getType().toString();
+            ClassRepresentation parentRep = representations.get(parentName);
+            if (representations.containsKey(type)) {
+                parentRep.addToClassesReturnedByMethods(type, name);
+            }
+            NodeList<Parameter> parameters  = md.getParameters();
             for (Parameter p: parameters) {
-                Type type = p.getType();
-                if (nodes.containsKey(type.toString()) {
-                    curNode.addToClassesUsedAsArguments(type.toString(), md.getNameAsString());
+                String pTypeName = p.getType().toString();
+                if (representations.containsKey(pTypeName)) {
+                    parentRep.addToClassesUsedAsArguments(pTypeName, name);
+                }
+                variableDeclarationVisitor vdv = new variableDeclarationVisitor();
+                vdv.visit(md, parentRep);
+            }
+        }
+        private class variableDeclarationVisitor extends VoidVisitorAdapter<ClassRepresentation> {
+            @Override
+            public void visit(VariableDeclarator vd, ClassRepresentation cr) {
+                super.visit(vd, cr);
+                String typeName = vd.getTypeAsString();
+                if (representations.containsKey(typeName)) {
+                    cr.addToClassesUsedAsLocalVariables(typeName, curMethodName);
+                }
+            }
+            @Override
+            public void visit(VariableDeclarationExpr vde, ClassRepresentation cr) {
+                super.visit(vde, cr);
+                String vType = vde.getElementType().asString();
+                if (representations.containsKey(vType)) {
+                    cr.addToClassesUsedAsLocalVariables(vType, curMethodName);
                 }
             }
         }
     }
-    */
+
+
 }
