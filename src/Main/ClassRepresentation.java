@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-public class ClassNode {
+public class ClassRepresentation {
 
     private Hashtable<String,String>  classesUsedAsFields;
     private ArrayList <String> parentClassList;
@@ -13,8 +13,17 @@ public class ClassNode {
     //Key is class name, value is name of method that takes it as an argument
     private Hashtable <String,String>classesUsedAsArguments;
     private String name;
-    //This stores names of methods, Boolean is true if public, false if private
-    private Hashtable<String, Boolean>methods;
+
+    public ArrayList<MethodRepresentation> getMethods() {
+        return methods;
+    }
+
+    public void addToMethods(MethodRepresentation method) {
+        this.methods.add(method);
+    }
+
+    //This stores methodNodes
+    private ArrayList<MethodRepresentation> methods;
 
     public int getSize() {
         return size;
@@ -26,7 +35,7 @@ public class ClassNode {
 
     private int size;
 
-    public ClassNode(String name) {
+    public ClassRepresentation(String name) {
         this.name = name;
         this.classesReturnedByMethods = new Hashtable<>();
         this.classesUsedAsArguments = new Hashtable<>();

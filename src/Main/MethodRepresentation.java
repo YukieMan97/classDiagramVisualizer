@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class MethodNode {
+public class MethodRepresentation {
 
     private String name;
     private ArrayList<String> usedClasses;
