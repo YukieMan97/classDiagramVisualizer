@@ -67,6 +67,27 @@ Notes about first user study:
 Sry if I can't provide any further information on this as that's pretty much the limit of my knowledge on the topic haha, although please lmk if you need testers later down the line when this becomes a working program, I'd love to try it out!
 
 - User study #3: 
+1. What made sense to me
+ - The basic idea of this project : Visualize the design of a system or segments of it is a well known, frequent, and crucial necessity.
+ - Also isolating the interactions of specific methods or fields : for the same reasons.
+ - Representing information using shapes and colors : Simple visual semantics allows quick and intuitive readability.
+ - Documenting the design of a project in this way automatically : Manually doing this step is laborious and facilitates the introduction of mistakes.
+ 
+2. What didn't make sens (might be irrelevant since I made some assumptions)
+ - How can the shapes representing methods and fields be identified without the corresponding name?
+ - Would it always be preferable that the class with more attributes appears bigger?
+ 
+3. Possible improvements
+ - The most standard visual modeling languages' large size is known to hinder learning. In companies, it often ends up being used with the individual authors' interpretation and sense of what is intuitive. Maybe a possibility to customize the "language's features" would be comfortable (I'm thinking about Square and circle associated with Private and Public).
+ - I find myself questioning the use of colors to differentiate classes from each other. Is it necessary? And couldn't colors, a powerful visual tool, be used more efficiently?
+ 
+4. What I like about this idea 
+ - Having a tool that can do this operation automatically. Even without thinking about making mistakes trying to do it manually, I would bet money that developers would use a lot more often a visual representation as a reference because it's quicker and effortless.
+ - I like the description of the beneficial points of having a visual representation: "getting a feel of OOP principles," "understanding or controlling coupling and cohesion in a system design" ...
+ 
+5. What I dislike or am worried about (again with some assumptions)
+ - Worried that the representation choices will make the visual representation very heavy for big projects, or simply for classes with lots of attributes.
+ - Don't like that the list of attributes for a class seems to be randomly spread in and out arround it. I usually like to have some rules of thumb to be able to search for one specific attribute especially when it lies among many.
 
 Any changes to original analysis/visualisation design: 
 - things to consider: colour representation if project is very large, display # of classes/methods/fields/etc., visualize stats/data about program (ex. # lines of code in each class).
