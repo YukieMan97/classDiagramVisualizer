@@ -95,6 +95,7 @@ Any changes to original analysis/visualisation design:
 ## Milestone 4
 Status of implementation:
 - Jeremy got the Java parser working, however Avi thinks Java Swing might be difficult to use for our visualization aspect. So we will need to discuss what language our implementation will be in. 
+- Nov 24th Update: Although our group is inexperienced with React, we have decided to go along with it for our visualization aspect. After discussing with Alex and Kathaerine, we believe it would be much better to learn and implement with React than use Java Swing or some other Java libraries.
 
 Plans for final user study:
 - contact previous users and new users to test our program
