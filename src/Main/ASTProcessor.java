@@ -1,5 +1,6 @@
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
@@ -85,6 +86,7 @@ public class ASTProcessor {
 
         private VariableDeclarationVisitor vdv = new VariableDeclarationVisitor();
         private String fName;
+        private ClassRepresentation currentClassRep;
 
         @Override
         public void visit(FieldDeclaration fd, Void arg) {
@@ -92,21 +94,29 @@ public class ASTProcessor {
             Optional<Node> parentNode = fd.getParentNode();
             Node parent = parentNode.get();
             String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
-            vdv.visit(fd, representations.get(parentName));
+            currentClassRep = representations.get(parentName);
+            NodeList<Modifier> mods = fd.getModifiers();
+            vdv.visit(fd, mods);
         }
 
-        private class TypeVisitor extends VoidVisitorAdapter<ClassRepresentation> {
+        private class TypeVisitor extends VoidVisitorAdapter<NodeList<Modifier>> {
             @Override
-            public void visit(ClassOrInterfaceType c, ClassRepresentation cr) {
-                super.visit(c, cr);
+            public void visit(ClassOrInterfaceType c, NodeList<Modifier> mods) {
+                super.visit(c, mods);
                 String name = c.getNameAsString();
                 if (representations.containsKey(name)) {
-                    cr.addToClassesUsedAsFields(name, fName);
+                    for (Modifier m: mods) {
+                        if (m.getKeyword().asString().equalsIgnoreCase("public")) {
+                            currentClassRep.addToClassesUsedAsPublicFields(name, fName);
+                        } else if (m.getKeyword().asString().equalsIgnoreCase("private")) {
+                            currentClassRep.addToClassesUsedAsPrivateFields(name, fName);
+                        }
+                    }
                 }
             }
         }
 
-        private class VariableDeclarationVisitor extends VoidVisitorAdapter<ClassRepresentation> {
+        private class VariableDeclarationVisitor extends VoidVisitorAdapter<NodeList<Modifier>> {
             private TypeVisitor tv;
 
             public VariableDeclarationVisitor() {
@@ -115,10 +125,10 @@ public class ASTProcessor {
             }
 
             @Override
-            public void visit(VariableDeclarator vd, ClassRepresentation cr) {
-                super.visit(vd, cr);
+            public void visit(VariableDeclarator vd, NodeList<Modifier> mods) {
+                super.visit(vd, mods);
                 fName = vd.getNameAsString();
-                tv.visit(vd, cr);
+                tv.visit(vd, mods);
 
             }
         }

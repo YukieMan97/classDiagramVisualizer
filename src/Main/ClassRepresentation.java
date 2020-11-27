@@ -3,8 +3,11 @@ import java.util.Hashtable;
 
 public class ClassRepresentation {
 
-    //key is class name, value is either private or public
-    private Hashtable<String,String>  classesUsedAsFields;
+    //key is class name, value is field name
+    private Hashtable<String,String>  classesUsedAsPrivateFields;
+    //key is class name, value is field name
+    private Hashtable<String,String>  classesUsedAsPublicFields;
+
     private ArrayList <String> parentClassList;
     private ArrayList <String>  parentInterfaceList;
     //key is class name, value is method name
@@ -40,14 +43,19 @@ public class ClassRepresentation {
         this.name = name;
         this.classesReturnedByMethods = new Hashtable<>();
         this.classesUsedAsArguments = new Hashtable<>();
-        this.classesUsedAsFields = new Hashtable<>();
+        this.classesUsedAsPublicFields = new Hashtable<>();
+        this.classesUsedAsPrivateFields = new Hashtable<>();
         this.classesUsedAsLocalVariables = new Hashtable<>();
         this.parentClassList = new ArrayList<String>();
         this.parentInterfaceList = new ArrayList<String>();
     }
 
-    public Hashtable<String, String> getClassesUsedAsFields() {
-        return this.classesUsedAsFields;
+    public Hashtable<String, String> getClassesUsedAsPublicFields() {
+        return this.classesUsedAsPublicFields;
+    }
+
+    public Hashtable<String, String> getClassesUsedAsPrivateFields() {
+        return this.classesUsedAsPrivateFields;
     }
 
     public ArrayList<String> getParentClassList() {
@@ -70,8 +78,12 @@ public class ClassRepresentation {
         return this.classesUsedAsArguments;
     }
 
-    public void addToClassesUsedAsFields(String className, String fieldName) {
-        this.classesUsedAsFields.put(className, fieldName);
+    public void addToClassesUsedAsPublicFields(String className, String fieldName) {
+        this.classesUsedAsPublicFields.put(className, fieldName);
+    }
+
+    public void addToClassesUsedAsPrivateFields(String className, String fieldName) {
+        this.classesUsedAsPrivateFields.put(className, fieldName);
     }
 
     public void addToClassesUsedAsArguments(String className, String methodName) {
