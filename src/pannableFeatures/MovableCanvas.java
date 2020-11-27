@@ -5,10 +5,10 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
-public class MovableCanvas extends Pane {
+public class MovableCanvas extends StackPane {
     DoubleProperty scale = new SimpleDoubleProperty(1.0);
 
 

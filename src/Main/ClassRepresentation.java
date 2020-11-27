@@ -35,6 +35,8 @@ public class ClassRepresentation {
         this.size = size;
     }
 
+    public String getName() { return this.name; }
+
     private int size;
 
     public ClassRepresentation(String name) {
