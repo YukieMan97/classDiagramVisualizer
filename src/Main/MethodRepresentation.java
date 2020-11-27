@@ -6,6 +6,7 @@ public class MethodRepresentation {
 
     private ArrayList<String> usedClasses;
     private ArrayList<String> methodsThatCallThis;
+    private ArrayList<String> methodsThisCalls;
     private boolean isPrivate;
 
     public boolean isPrivate() {
@@ -31,6 +32,14 @@ public class MethodRepresentation {
 
     public void addToMethodsThatCallThis(String methodName) {
         this.methodsThatCallThis.add(methodName);
+    }
+
+    public ArrayList<String> getMethodsThisCalls() {
+        return methodsThisCalls;
+    }
+
+    public void addToMethodsThisCalls(String methodName) {
+        this.methodsThisCalls.add(methodName);
     }
 
     public String getName() {
