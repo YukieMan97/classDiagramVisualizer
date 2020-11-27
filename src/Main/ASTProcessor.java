@@ -16,12 +16,13 @@ import java.util.Hashtable;
 import java.util.Optional;
 
 public class ASTProcessor {
-    private Hashtable<String, ClassRepresentation> representations;
     private ClassRepresentation curNode;
     private ArrayList<CompilationUnit> classTrees;
+    private Hashtable<String, MethodRepresentation> methodRepresentations;
+    private Hashtable<String, ClassRepresentation> classRepresentations;
 
     public ASTProcessor() {
-        representations = new Hashtable<String, ClassRepresentation>();
+        classRepresentations = new Hashtable<String, ClassRepresentation>();
         classTrees = new ArrayList<CompilationUnit>();
     }
 
@@ -43,7 +44,7 @@ public class ASTProcessor {
             VoidVisitor<Hashtable<String, ClassRepresentation>> namer = new ClassNodeNamer();
             ArrayList<CompilationUnit> classTrees = new ArrayList<CompilationUnit>();
             for (CompilationUnit cu : cus) {
-                namer.visit(cu, representations);
+                namer.visit(cu, classRepresentations);
             }
             for (CompilationUnit cu : cus) {
                 processCompilationUnit(cu);
@@ -94,7 +95,7 @@ public class ASTProcessor {
             Optional<Node> parentNode = fd.getParentNode();
             Node parent = parentNode.get();
             String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
-            currentClassRep = representations.get(parentName);
+            currentClassRep = classRepresentations.get(parentName);
             NodeList<Modifier> mods = fd.getModifiers();
             vdv.visit(fd, mods);
         }
@@ -104,7 +105,7 @@ public class ASTProcessor {
             public void visit(ClassOrInterfaceType c, NodeList<Modifier> mods) {
                 super.visit(c, mods);
                 String name = c.getNameAsString();
-                if (representations.containsKey(name)) {
+                if (classRepresentations.containsKey(name)) {
                     for (Modifier m: mods) {
                         if (m.getKeyword().asString().equalsIgnoreCase("public")) {
                             currentClassRep.addToClassesUsedAsPublicFields(name, fName);
@@ -148,14 +149,14 @@ public class ASTProcessor {
                 Node parent = parentNode.get();
                 String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
                 String type = md.getType().toString();
-                ClassRepresentation parentRep = representations.get(parentName);
-                if (representations.containsKey(type)) {
+                ClassRepresentation parentRep = classRepresentations.get(parentName);
+                if (classRepresentations.containsKey(type)) {
                     parentRep.addToClassesReturnedByMethods(type, name);
                 }
                 NodeList<Parameter> parameters = md.getParameters();
                 for (Parameter p : parameters) {
                     String pTypeName = p.getType().toString();
-                    if (representations.containsKey(pTypeName)) {
+                    if (classRepresentations.containsKey(pTypeName)) {
                         parentRep.addToClassesUsedAsArguments(pTypeName, name);
                     }
                     variableDeclarationVisitor vdv = new variableDeclarationVisitor();
@@ -190,7 +191,7 @@ public class ASTProcessor {
                     public void visit(ClassOrInterfaceType c, ClassRepresentation cr) {
                         super.visit(c, cr);
                         String name = c.getNameAsString();
-                        if (representations.containsKey(name)) {
+                        if (classRepresentations.containsKey(name)) {
                             cr.addToClassesUsedAsLocalVariables(name, curMethodName);
                         }
                     }
