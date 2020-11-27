@@ -3,6 +3,7 @@ import java.util.Hashtable;
 
 public class ClassRepresentation {
 
+    //key is class name, value is either private or public
     private Hashtable<String,String>  classesUsedAsFields;
     private ArrayList <String> parentClassList;
     private ArrayList <String>  parentInterfaceList;

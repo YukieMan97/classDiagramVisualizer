@@ -130,8 +130,10 @@ public class ASTProcessor {
             @Override
             public void visit(MethodDeclaration md, Void arg) {
                 super.visit(md, arg);
+                MethodRepresentation curMethodRep = new MethodRepresentation();
                 String name = md.getNameAsString();
                 curMethodName = name;
+                curMethodRep.setName(name);
                 Optional<Node> parentNode = md.getParentNode();
                 Node parent = parentNode.get();
                 String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
