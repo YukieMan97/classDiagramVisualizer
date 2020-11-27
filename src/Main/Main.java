@@ -78,15 +78,15 @@ public class Main extends Application {
 
         // create first child public class circle and text
         Circle publicCircle1a = createPublicCircle(100, 100, C_CIRCLE_RADIUS, publicColor, circle1, text1);
-        Text text1a = createText(100, 100, "public method 1");
+        Text text1a = createText(100, 100, "public field 1");
 
         // create second child private class square and text
         Rectangle privateSquare1b = createPrivateSquare(100, 100, C_SQUARE_SIZE, privateColor, circle1, text1);
-        Text text1b = createText(100, 100, "private method 1");
+        Text text1b = createText(100, 100, "private field 1");
 
         // create third child public class circle and text
         Circle publicCircle1c = createPublicCircle(100, 100, C_CIRCLE_RADIUS, publicColor, circle1, text1);
-        Text text1c = createText(100, 100, "public method 2");
+        Text text1c = createText(100, 100, "public field 2");
 
         // add all nodes related to the first class to the canvas
         canvas.getChildren().addAll(circle1, text1, publicCircle1a, privateSquare1b, publicCircle1c);
@@ -98,7 +98,7 @@ public class Main extends Application {
 
         // create first child private class square and text
         Rectangle privateSquare2a = createPrivateSquare(500, 100, C_SQUARE_SIZE, privateColor, circle2, text2);
-        Text text2a = createText(500, 100, "private method 1");
+        Text text2a = createText(500, 100, "private field 1");
 
         // add all nodes related to the second class to the canvas
         canvas.getChildren().addAll(circle2, text2, privateSquare2a);
@@ -110,11 +110,11 @@ public class Main extends Application {
 
         // create first child public class circle and text
         Circle publicCircle3a = createPublicCircle(900, 100, C_CIRCLE_RADIUS, publicColor, circle3, text3);
-        Text text3a = createText(900, 100, "public method 1");
+        Text text3a = createText(900, 100, "public field 1");
 
         // create second child private class square and text
         Rectangle privateSquare3b = createPrivateSquare(900, 100, C_SQUARE_SIZE, privateColor, circle3, text3);
-        Text text3b = createText(900, 100, "private method 1");
+        Text text3b = createText(900, 100, "private field 1");
 
         // add all nodes related to the second class to the canvas
         canvas.getChildren().addAll(circle3, text3, publicCircle3a, privateSquare3b);
@@ -138,7 +138,7 @@ public class Main extends Application {
 //        circle3.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeActions.getOnMouseDraggedEventHandler());
     }
 
-    // create a public circle to represent public methods of the parent class
+    // create a public circle to represent public fields of the parent class
     private Circle createPublicCircle(double x, double y, double radius, Color c, Circle parentCircle, Text text) {
         // create circle
         final Circle privateCircle = new Circle(x, y, radius, c);
@@ -168,7 +168,7 @@ public class Main extends Application {
         return privateCircle;
     }
 
-    // create a private square to represent private methods of parent class
+    // create a private square to represent private fields of parent class
     private Rectangle createPrivateSquare(double x, double y, double radius, Color c, Circle parentCircle, Text text) {
         // create square
         final Rectangle privateSquare = new Rectangle(x, y, radius, radius);
@@ -243,7 +243,7 @@ public class Main extends Application {
                 ((Rectangle) s).setWidth(width + sizeChange);
                 ((Rectangle) s).setHeight(height + sizeChange);
             }
-            // shows name of method
+            // shows name of field
             // problem: keeps updating when mouse is close to text
             text.setX(textX);
             text.setY(textY);
@@ -266,7 +266,7 @@ public class Main extends Application {
                 ((Rectangle) s).setWidth(width - sizeChange);
                 ((Rectangle) s).setHeight(height - sizeChange);
             }
-            // doesn't show name of method anymore
+            // doesn't show name of field anymore
             canvas.getChildren().remove(text);
         });
     }
