@@ -67,7 +67,7 @@ public class SceneActions {
     private EventHandler<ScrollEvent> onScrollEventHandler = new EventHandler<ScrollEvent>() {
         @Override
         public void handle(ScrollEvent scrollEvent) {
-            double delta = 1.2;
+            double delta = 1.05;
 
             double scale = canvas.getScale();
             double oldScale = scale;
