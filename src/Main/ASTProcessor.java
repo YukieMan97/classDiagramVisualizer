@@ -33,6 +33,10 @@ public class ASTProcessor {
         classTrees = new ArrayList<CompilationUnit>();
     }
 
+    private void testMethod() {
+
+    }
+
 
     public ArrayList<CompilationUnit> createCompilationUnits(ArrayList<String> paths) throws FileNotFoundException {
         ArrayList<CompilationUnit> results = new ArrayList<CompilationUnit>();
@@ -47,6 +51,7 @@ public class ASTProcessor {
 
     public void process(ArrayList<String> paths) {
         try {
+            testMethod();
             ArrayList<CompilationUnit> cus = createCompilationUnits(paths);
             VoidVisitor<Hashtable<String, ClassRepresentation>> namer = new ClassNodeNamer();
             ArrayList<CompilationUnit> classTrees = new ArrayList<CompilationUnit>();
@@ -173,7 +178,7 @@ public class ASTProcessor {
                     if (classRepresentations.containsKey(pTypeName)) {
                         parentClassRep.addToClassesUsedAsArguments(pTypeName, name);
                         curMethodRep.addToUsedClasses(pTypeName);
-                        curMethodRep.addToArgumentNames(name);
+                        curMethodRep.addToArgumentNames(name, pTypeName);
                     }
                     variableDeclarationVisitorForLocalVariable vdv = new variableDeclarationVisitorForLocalVariable();
                     vdv.visit(md, parentClassRep);
@@ -241,7 +246,20 @@ public class ASTProcessor {
                     super.visit(call, mr);
                     String methodName = call.getNameAsString();
                     Optional<Expression> scope = call.getScope();
+                    if (scope.equals(null)) {
+                        curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getName());
+                    } else {
+                        String scopeName = scope.toString();
+                        if (curMethodRep.getLocalVars().containsKey(scopeName)) {
+                            curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getLocalVars().get(scopeName));
+                            if (methodRepresentations.containsKey(scopeName + ": " + methodName)) {
+                                methodRepresentations.get(scopeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                            }
+
+                        }
+                    }
                 }
+
             }
 
         }

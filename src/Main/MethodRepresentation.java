@@ -6,9 +6,12 @@ public class MethodRepresentation {
     private String name;
 
     private ArrayList<String> usedClasses;
-    private ArrayList<String> methodsThatCallThis;
-    private ArrayList<String> methodsThisCalls;
-    private ArrayList<String> argumentNames;
+    //key is method name, value is list of scopes
+    private Hashtable<String, ArrayList<String>> methodsThatCallThis;
+    //key is scope, value is methodname
+    private Hashtable<String, ArrayList<String>> methodsThisCalls;
+    //key is argument name, value is type
+    private Hashtable<String, String> argumentNames;
     //key is localVarName, value is types
     private Hashtable<String, String> localVars;
     //Its own fields used, not that of any argument or local variable
@@ -18,9 +21,9 @@ public class MethodRepresentation {
     public MethodRepresentation(String name) {
         this.name = name;
         this.usedClasses = new ArrayList<String>();
-        this.methodsThatCallThis = new ArrayList<String>();
-        this.methodsThisCalls = new ArrayList<String>();
-        this.argumentNames = new ArrayList<String>();
+        this.methodsThatCallThis = new Hashtable<String, ArrayList<String>>();
+        this.methodsThisCalls = new Hashtable<String, ArrayList<String>>();
+        this.argumentNames = new Hashtable<String, String>();
         this.usedFields = new ArrayList<String>();
         this.localVars = new Hashtable<String, String>();
     }
@@ -45,24 +48,26 @@ public class MethodRepresentation {
         }
     }
 
-    public ArrayList<String> getMethodsThatCallThis() {
+    public Hashtable<String, ArrayList<String>>  getMethodsThatCallThis() {
         return methodsThatCallThis;
     }
 
-    public void addToMethodsThatCallThis(String methodName) {
-        if (!this.methodsThatCallThis.contains(methodName)) {
-            this.methodsThatCallThis.add(methodName);
+    public void addToMethodsThatCallThis(String methodName, String scopeName ) {
+        if (!this.methodsThatCallThis.containsKey(methodName)) {
+            this.methodsThatCallThis.put(methodName, new ArrayList<String>());
         }
+        this.methodsThatCallThis.get(methodName).add(scopeName);
     }
 
-    public ArrayList<String> getMethodsThisCalls() {
+    public Hashtable<String, ArrayList<String>>  getMethodsThisCalls() {
         return methodsThisCalls;
     }
 
-    public void addToMethodsThisCalls(String methodName) {
-        if (!this.methodsThisCalls.contains(methodName)) {
-            this.methodsThisCalls.add(methodName);
+    public void addToMethodsThisCalls(String methodName, String scopeName) {
+        if (!this.methodsThisCalls.containsKey(methodName)) {
+            this.methodsThisCalls.put(methodName, new ArrayList<String>());
         }
+        this.methodsThisCalls.get(methodName).add(scopeName);
     }
 
     public String getName() {
@@ -93,11 +98,13 @@ public class MethodRepresentation {
         }
     }
 
-    public ArrayList<String> getArgumentNames() {
+    public Hashtable<String, String>  getArgumentNames() {
         return this.argumentNames;
     }
 
-    public void addToArgumentNames(String varName) {
-        this.argumentNames.add(varName);
+    public void addToArgumentNames(String varName, String argType) {
+        if (!this.argumentNames.containsKey(varName)) {
+            this.argumentNames.put(varName, argType);
+        }
     }
 }
