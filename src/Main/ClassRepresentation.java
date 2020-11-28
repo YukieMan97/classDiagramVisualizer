@@ -1,29 +1,63 @@
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Map;
 
 public class ClassRepresentation {
 
-    private Hashtable<String,String>  classesUsedAsFields;
+    //key is class name, value is field name
+    private Hashtable<String,ArrayList<String>>  classesUsedAsPrivateFields;
+    //key is class name, value is field name(s)
+    private Hashtable<String,ArrayList<String>>  classesUsedAsPublicFields;
+
     private ArrayList <String> parentClassList;
     private ArrayList <String>  parentInterfaceList;
-    //key is class name, value is method name
-    private Hashtable <String,String>  classesReturnedByMethods;
-    //key is class name, value is name of method that uses it as variable
-    private Hashtable <String,String> classesUsedAsLocalVariables;
-    //Key is class name, value is name of method that takes it as an argument
-    private Hashtable <String,String>classesUsedAsArguments;
+    //key is class name, value is methods names
+    private Hashtable <String,ArrayList<String>>  classesReturnedByMethods;
+    //key is class name, value is names of methods that use it as variable
+    private Hashtable <String,ArrayList<String>> classesUsedAsLocalVariables;
+    //Key is class name, value is names of methods that take it as an argument
+    private Hashtable <String,ArrayList<String>>classesUsedAsArguments;
     private String name;
+
+    private ArrayList<String> methodNames;
+    private ArrayList<String> fieldNames;
+
+    private int size;
+
+    public MethodRepresentation testMethod;
+
+    public ClassRepresentation(String name) {
+        this.name = name;
+        this.classesReturnedByMethods = new Hashtable<>();
+        this.classesUsedAsArguments = new Hashtable<>();
+        this.classesUsedAsPublicFields = new Hashtable<>();
+        this.classesUsedAsPrivateFields = new Hashtable<>();
+        this.classesUsedAsLocalVariables = new Hashtable<>();
+        this.parentClassList = new ArrayList<String>();
+        this.parentInterfaceList = new ArrayList<String>();
+        this.fieldNames = new ArrayList<String>();
+        testMethod = new MethodRepresentation("Test");
+
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    private ArrayList<MethodRepresentation> methods;
 
     public ArrayList<MethodRepresentation> getMethods() {
         return methods;
     }
 
     public void addToMethods(MethodRepresentation method) {
+        this.methodNames.add(method.getName());
         this.methods.add(method);
     }
 
-    //This stores methodNodes
-    private ArrayList<MethodRepresentation> methods;
+    public boolean hasMethod(String methodName) {
+        return this.methodNames.contains(methodName);
+    }
 
     public int getSize() {
         return size;
@@ -33,20 +67,13 @@ public class ClassRepresentation {
         this.size = size;
     }
 
-    private int size;
 
-    public ClassRepresentation(String name) {
-        this.name = name;
-        this.classesReturnedByMethods = new Hashtable<>();
-        this.classesUsedAsArguments = new Hashtable<>();
-        this.classesUsedAsFields = new Hashtable<>();
-        this.classesUsedAsLocalVariables = new Hashtable<>();
-        this.parentClassList = new ArrayList<String>();
-        this.parentInterfaceList = new ArrayList<String>();
+    public Hashtable<String, ArrayList<String>> getClassesUsedAsPublicFields() {
+        return this.classesUsedAsPublicFields;
     }
 
-    public Hashtable<String, String> getClassesUsedAsFields() {
-        return this.classesUsedAsFields;
+    public Hashtable<String, ArrayList<String>> getClassesUsedAsPrivateFields() {
+        return this.classesUsedAsPrivateFields;
     }
 
     public ArrayList<String> getParentClassList() {
@@ -57,32 +84,53 @@ public class ClassRepresentation {
         return this.parentInterfaceList;
     }
 
-    public Hashtable<String, String>  getClassesReturnedByMethodsList() {
+    public Hashtable<String, ArrayList<String>>  getClassesReturnedByMethodsList() {
         return this.classesReturnedByMethods;
     }
 
-    public Hashtable<String, String>  getClassesUsedAsLocalVariables() {
+    public Hashtable<String, ArrayList<String>>  getClassesUsedAsLocalVariables() {
         return this.classesUsedAsLocalVariables;
     }
 
-    public Hashtable<String, String>  getClassesUsedAsArguments() {
+    public Hashtable<String, ArrayList<String>>  getClassesUsedAsArguments() {
         return this.classesUsedAsArguments;
     }
 
-    public void addToClassesUsedAsFields(String className, String fieldName) {
-        this.classesUsedAsFields.put(className, fieldName);
+    public void addToClassesUsedAsPublicFields(String className, String fieldName) {
+        if (!classesUsedAsPublicFields.containsKey(className)) {
+            this.classesUsedAsPublicFields.put(className, new ArrayList<String>());
+        }
+        this.classesUsedAsPublicFields.get(className).add(fieldName);
+        this.fieldNames.add(fieldName);
+    }
+
+    public void addToClassesUsedAsPrivateFields(String className, String fieldName) {
+        if (!classesUsedAsPrivateFields.containsKey(className)) {
+            this.classesUsedAsPrivateFields.put(className, new ArrayList<String>());
+        }
+        this.classesUsedAsPrivateFields.get(className).add(fieldName);
+        this.fieldNames.add(fieldName);
     }
 
     public void addToClassesUsedAsArguments(String className, String methodName) {
-        this.classesUsedAsArguments.put(className, methodName);
+        if (!classesUsedAsArguments.containsKey(className)) {
+            this.classesUsedAsArguments.put(className, new ArrayList<String>());
+        }
+        this.classesUsedAsArguments.get(className).add(methodName);
     }
 
     public void addToClassesUsedAsLocalVariables(String className, String methodName) {
-        this.classesUsedAsLocalVariables.put(className, methodName);
+        if (!this.classesUsedAsLocalVariables.containsKey(className)) {
+            this.classesUsedAsLocalVariables.put(className, new ArrayList<String>());
+        }
+        this.classesUsedAsLocalVariables.get(className).add(methodName);
     }
 
     public void addToClassesReturnedByMethods(String className, String methodName) {
-        this.classesReturnedByMethods.put(className, methodName);
+        if (!this.classesReturnedByMethods.containsKey(className)) {
+            this.classesReturnedByMethods.put(className, new ArrayList<String>());
+        }
+        this.classesReturnedByMethods.get(className).add(methodName);
     }
 
     public void addToParentClasses(String className) {
@@ -92,6 +140,38 @@ public class ClassRepresentation {
     public void addToParentInterfaceList(String className) {
         this.parentInterfaceList.add(className);
     }
+
+    public ArrayList<String> getFieldNames() {
+        return this.fieldNames;
+    }
+
+    public String getKeyForPrivateFieldName(String fName) {
+        String key ="";
+        for (Map.Entry entry: classesUsedAsPrivateFields.entrySet()) {
+            for (String s : (ArrayList<String>) entry.getValue()) {
+                if (fName.equals(s)) {
+                    key = (String) entry.getKey();
+                    break;
+                }
+            }
+        }
+        return key;
+    }
+
+    public String getKeyForPublicFieldName(String fName) {
+        String key ="";
+        for (Map.Entry entry: classesUsedAsPublicFields.entrySet()) {
+            for (String s : (ArrayList<String>) entry.getValue()) {
+                if (fName.equals(s)) {
+                    key = (String) entry.getKey();
+                    break;
+                }
+            }
+        }
+        return key;
+    }
+
+
 
 
 }
