@@ -35,6 +35,7 @@ public class ClassRepresentation {
         this.parentClassList = new ArrayList<String>();
         this.parentInterfaceList = new ArrayList<String>();
         this.fieldNames = new ArrayList<String>();
+        this.methodNames = new ArrayList<String>();
 
     }
 

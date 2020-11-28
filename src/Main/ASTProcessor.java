@@ -174,8 +174,9 @@ public class ASTProcessor {
             Node parent = parentNode.get();
             String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
             parentClassRep = classRepresentations.get(parentName);
-
             curMethodRep = methodRepresentations.get(parentName + ": " + name);
+            parentClassRep.addToMethods(curMethodRep);
+
 
 
             NodeList<Modifier> mods = md.getModifiers();
@@ -206,7 +207,7 @@ public class ASTProcessor {
             ufv.visit(md, curMethodRep);
             MethodCallVisitor mcv = new MethodCallVisitor();
             mcv.visit(md, curMethodRep);
-            parentClassRep.addToMethods(curMethodRep);
+
         }
 
         private class variableDeclarationVisitorForLocalVariable extends VoidVisitorAdapter<ClassRepresentation> {
