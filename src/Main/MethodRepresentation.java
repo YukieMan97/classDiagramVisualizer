@@ -9,6 +9,10 @@ public class MethodRepresentation {
     private ArrayList<String> methodsThisCalls;
     private boolean isPrivate;
 
+    public MethodRepresentation(String name) {
+        this.name = name;
+    }
+
     public boolean isPrivate() {
         return isPrivate;
     }

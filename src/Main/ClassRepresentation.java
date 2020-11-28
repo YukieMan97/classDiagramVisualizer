@@ -18,13 +18,17 @@ public class ClassRepresentation {
     private Hashtable <String,ArrayList<String>>classesUsedAsArguments;
     private String name;
 
+    private ArrayList<String> methodNames;
+
     public ArrayList<MethodRepresentation> getMethods() {
         return methods;
     }
 
     public void addToMethods(MethodRepresentation method) {
+        this.methodNames.add(method.getName());
         this.methods.add(method);
     }
+
 
     //This stores methodNodes
     private ArrayList<MethodRepresentation> methods;
@@ -120,6 +124,8 @@ public class ClassRepresentation {
     public void addToParentInterfaceList(String className) {
         this.parentInterfaceList.add(className);
     }
+
+
 
 
 }

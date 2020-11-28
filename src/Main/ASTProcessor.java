@@ -141,10 +141,10 @@ public class ASTProcessor {
             @Override
             public void visit(MethodDeclaration md, Void arg) {
                 super.visit(md, arg);
-                MethodRepresentation curMethodRep = new MethodRepresentation();
+              //  MethodRepresentation curMethodRep = new MethodRepresentation();
                 String name = md.getNameAsString();
                 curMethodName = name;
-                curMethodRep.setName(name);
+                MethodRepresentation curMethodRep = new MethodRepresentation(name);
                 Optional<Node> parentNode = md.getParentNode();
                 Node parent = parentNode.get();
                 String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
@@ -159,15 +159,15 @@ public class ASTProcessor {
                     if (classRepresentations.containsKey(pTypeName)) {
                         parentRep.addToClassesUsedAsArguments(pTypeName, name);
                     }
-                    variableDeclarationVisitor vdv = new variableDeclarationVisitor();
+                    variableDeclarationVisitorForLocalVariable vdv = new variableDeclarationVisitorForLocalVariable();
                     vdv.visit(md, parentRep);
                 }
             }
 
-            private class variableDeclarationVisitor extends VoidVisitorAdapter<ClassRepresentation> {
+            private class variableDeclarationVisitorForLocalVariable extends VoidVisitorAdapter<ClassRepresentation> {
                 private TypeVisitor tv;
 
-                public variableDeclarationVisitor() {
+                public variableDeclarationVisitorForLocalVariable() {
                     super();
                     tv = new TypeVisitor();
                 }
@@ -176,7 +176,6 @@ public class ASTProcessor {
                 public void visit(VariableDeclarator vd, ClassRepresentation cr) {
                     super.visit(vd, cr);
                     tv.visit(vd, cr);
-
                 }
 
                 @Override
