@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Optional;
 
 public class ASTProcessor {
@@ -118,7 +119,7 @@ public class ASTProcessor {
                 super.visit(c, mods);
                 String name = c.getNameAsString();
                 if (classRepresentations.containsKey(name)) {
-                    for (Modifier m: mods) {
+                    for (Modifier m : mods) {
                         if (m.getKeyword().asString().equalsIgnoreCase("public")) {
                             currentClassRep.addToClassesUsedAsPublicFields(name, fName);
                         } else if (m.getKeyword().asString().equalsIgnoreCase("private")) {
@@ -147,63 +148,63 @@ public class ASTProcessor {
         }
     }
 
-        private class MethodProcessor extends VoidVisitorAdapter<Void> {
-            private String curMethodName;
-            private MethodRepresentation curMethodRep;
-            private ClassRepresentation parentClassRep;
-            private ArrayList<String> localVars;
-           // private ArrayList<>
+    private class MethodProcessor extends VoidVisitorAdapter<Void> {
+        private String curMethodName;
+        private MethodRepresentation curMethodRep;
+        private ClassRepresentation parentClassRep;
+        private ArrayList<String> localVars;
+        // private ArrayList<>
 
-            @Override
-            public void visit(MethodDeclaration md, Void arg) {
-                super.visit(md, arg);
-              //  MethodRepresentation curMethodRep = new MethodRepresentation();
-                String name = md.getNameAsString();
-                curMethodName = name;
-                curMethodRep = new MethodRepresentation(name);
+        @Override
+        public void visit(MethodDeclaration md, Void arg) {
+            super.visit(md, arg);
+            //  MethodRepresentation curMethodRep = new MethodRepresentation();
+            String name = md.getNameAsString();
+            curMethodName = name;
+            curMethodRep = new MethodRepresentation(name);
 
-                Optional<Node> parentNode = md.getParentNode();
-                Node parent = parentNode.get();
-                String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
-                parentClassRep = classRepresentations.get(parentName);
+            Optional<Node> parentNode = md.getParentNode();
+            Node parent = parentNode.get();
+            String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
+            parentClassRep = classRepresentations.get(parentName);
 
-                methodRepresentations.put(parentClassRep.getName() +": " + curMethodName, curMethodRep);
-                String type = md.getType().toString();
-                if (classRepresentations.containsKey(type)) {
-                    parentClassRep.addToClassesReturnedByMethods(type, name);
+            methodRepresentations.put(parentClassRep.getName() + ": " + curMethodName, curMethodRep);
+            String type = md.getType().toString();
+            if (classRepresentations.containsKey(type)) {
+                parentClassRep.addToClassesReturnedByMethods(type, name);
+            }
+            NodeList<Parameter> parameters = md.getParameters();
+            for (Parameter p : parameters) {
+                String pTypeName = p.getType().toString();
+                if (classRepresentations.containsKey(pTypeName)) {
+                    parentClassRep.addToClassesUsedAsArguments(pTypeName, name);
+                    curMethodRep.addToUsedClasses(pTypeName);
+                    curMethodRep.addToArgumentNames(name, pTypeName);
                 }
-                NodeList<Parameter> parameters = md.getParameters();
-                for (Parameter p : parameters) {
-                    String pTypeName = p.getType().toString();
-                    if (classRepresentations.containsKey(pTypeName)) {
-                        parentClassRep.addToClassesUsedAsArguments(pTypeName, name);
-                        curMethodRep.addToUsedClasses(pTypeName);
-                        curMethodRep.addToArgumentNames(name, pTypeName);
-                    }
-                    variableDeclarationVisitorForLocalVariable vdv = new variableDeclarationVisitorForLocalVariable();
-                    vdv.visit(md, parentClassRep);
-                }
-                UsedFieldsVisitor ufv = new UsedFieldsVisitor();
-                ufv.visit(md, curMethodRep);
-                MethodCallVisitor mcv = new MethodCallVisitor();
-                mcv.visit(md, curMethodRep);
+                variableDeclarationVisitorForLocalVariable vdv = new variableDeclarationVisitorForLocalVariable();
+                vdv.visit(md, parentClassRep);
+            }
+            UsedFieldsVisitor ufv = new UsedFieldsVisitor();
+            ufv.visit(md, curMethodRep);
+            MethodCallVisitor mcv = new MethodCallVisitor();
+            mcv.visit(md, curMethodRep);
+        }
+
+        private class variableDeclarationVisitorForLocalVariable extends VoidVisitorAdapter<ClassRepresentation> {
+            private TypeVisitor tv;
+
+            public variableDeclarationVisitorForLocalVariable() {
+                super();
+                tv = new TypeVisitor();
             }
 
-            private class variableDeclarationVisitorForLocalVariable extends VoidVisitorAdapter<ClassRepresentation> {
-                private TypeVisitor tv;
+            @Override
+            public void visit(VariableDeclarator vd, ClassRepresentation cr) {
+                super.visit(vd, cr);
+                String varName = vd.getNameAsString();
 
-                public variableDeclarationVisitorForLocalVariable() {
-                    super();
-                    tv = new TypeVisitor();
-                }
-
-                @Override
-                public void visit(VariableDeclarator vd, ClassRepresentation cr) {
-                    super.visit(vd, cr);
-                    String varName = vd.getNameAsString();
-
-                    tv.visit(vd, varName);
-                }
+                tv.visit(vd, varName);
+            }
 
                 /*@Override
                 public void visit(VariableDeclarationExpr vde, ClassRepresentation cr) {
@@ -212,57 +213,88 @@ public class ASTProcessor {
                 }*/
 
 
-                private class TypeVisitor extends VoidVisitorAdapter<String> {
+            private class TypeVisitor extends VoidVisitorAdapter<String> {
 
-                    @Override
-                    public void visit(ClassOrInterfaceType c, String varName ) {
-                        super.visit(c, varName);
-                        String name = c.getNameAsString();
-                        if (classRepresentations.containsKey(name)) {
-                            parentClassRep.addToClassesUsedAsLocalVariables(name, curMethodName);
-                            curMethodRep.addToLocalVarNames(varName, name);
-                        }
-
-                    }
-                }
-
-            }
-
-            private class UsedFieldsVisitor extends VoidVisitorAdapter<MethodRepresentation> {
                 @Override
-                public void visit(FieldAccessExpr fae, MethodRepresentation mr) {
-                    super.visit(fae, mr);
-                    String calleeName = fae.getScope().toString();
-                    if (calleeName.equalsIgnoreCase("this")) {
-                        curMethodRep.addToUsedFields(fae.getNameAsString());
+                public void visit(ClassOrInterfaceType c, String varName) {
+                    super.visit(c, varName);
+                    String name = c.getNameAsString();
+                    if (classRepresentations.containsKey(name)) {
+                        parentClassRep.addToClassesUsedAsLocalVariables(name, curMethodName);
+                        curMethodRep.addToLocalVarNames(varName, name);
                     }
-            }
 
-            }
-
-            private class MethodCallVisitor extends VoidVisitorAdapter<MethodRepresentation> {
-                @Override
-                public void visit(MethodCallExpr call, MethodRepresentation mr) {
-                    super.visit(call, mr);
-                    String methodName = call.getNameAsString();
-                    Optional<Expression> scope = call.getScope();
-                    if (scope.equals(null)) {
-                        curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getName());
-                    } else {
-                        String scopeName = scope.toString();
-                        if (curMethodRep.getLocalVars().containsKey(scopeName)) {
-                            curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getLocalVars().get(scopeName));
-                            if (methodRepresentations.containsKey(scopeName + ": " + methodName)) {
-                                methodRepresentations.get(scopeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                            }
-
-                        }
-                    }
                 }
-
             }
 
         }
 
+        private class UsedFieldsVisitor extends VoidVisitorAdapter<MethodRepresentation> {
+            @Override
+            public void visit(FieldAccessExpr fae, MethodRepresentation mr) {
+                super.visit(fae, mr);
+                String calleeName = fae.getScope().toString();
+                if (calleeName.equalsIgnoreCase("this")) {
+                    curMethodRep.addToUsedFields(fae.getNameAsString());
+                }
+            }
+
+        }
+
+        private class MethodCallVisitor extends VoidVisitorAdapter<MethodRepresentation> {
+            @Override
+            public void visit(MethodCallExpr call, MethodRepresentation mr) {
+                super.visit(call, mr);
+                String methodName = call.getNameAsString();
+                Optional<Expression> OptScope = call.getScope();
+                Expression scope = OptScope.get();
+
+                if (scope.equals(null)) {
+                    curMethodRep.addToMethodsThisCalls(methodName, parentClassRep.getName());
+                } else {
+
+                    String scopeName = getRelevantScopeName(scope);
+                    if (curMethodRep.getLocalVars().containsKey(scopeName)) {
+                        curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getLocalVars().get(scopeName));
+                        if (methodRepresentations.containsKey(curMethodRep.getLocalVars().get(scopeName) + ": " + methodName)) {
+                            methodRepresentations.get(curMethodRep.getLocalVars().get(scopeName) + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                        }
+                    } else if (curMethodRep.getArgumentNames().containsKey(scopeName)) {
+                        curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getArgumentNames().get(scopeName));
+                        if (methodRepresentations.containsKey(curMethodRep.getArgumentNames().get(scopeName) + ": " + methodName)) {
+                            methodRepresentations.get(curMethodRep.getArgumentNames().get(scopeName) + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                        }
+                    } else if (parentClassRep.getClassesUsedAsPrivateFields().containsValue(scopeName)) {
+                        String fName = parentClassRep.getKeyForPrivateFieldName(scopeName);
+                        curMethodRep.addToMethodsThisCalls(methodName, fName);
+                        if (methodRepresentations.containsKey(fName + ": " + methodName)) {
+                            methodRepresentations.get(fName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                        }
+
+                    } else if (parentClassRep.getClassesUsedAsPublicFields().containsValue(scopeName)) {
+                        String fName = parentClassRep.getKeyForPublicFieldName(scopeName);
+                        curMethodRep.addToMethodsThisCalls(methodName, fName);
+                        if (methodRepresentations.containsKey(fName + ": " + methodName)) {
+                            methodRepresentations.get(fName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                        }
+
+                    }
+                }
+
+
+            }
+
+            private String getRelevantScopeName(Expression scope) {
+                List<Node> nodes = scope.getChildNodes();
+                return "placeholder";
+
+            }
+
+
+        }
+
+
+
 
     }
+}

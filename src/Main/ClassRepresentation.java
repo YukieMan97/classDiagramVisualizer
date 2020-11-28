@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Map;
 
 public class ClassRepresentation {
 
@@ -134,6 +135,36 @@ public class ClassRepresentation {
 
     public void addToParentInterfaceList(String className) {
         this.parentInterfaceList.add(className);
+    }
+
+    public ArrayList<String> getFieldNames() {
+        return this.fieldNames;
+    }
+
+    public String getKeyForPrivateFieldName(String fName) {
+        String key ="";
+        for (Map.Entry entry: classesUsedAsPrivateFields.entrySet()) {
+            for (String s : (ArrayList<String>) entry.getValue()) {
+                if (fName.equals(s)) {
+                    key = (String) entry.getKey();
+                    break;
+                }
+            }
+        }
+        return key;
+    }
+
+    public String getKeyForPublicFieldName(String fName) {
+        String key ="";
+        for (Map.Entry entry: classesUsedAsPublicFields.entrySet()) {
+            for (String s : (ArrayList<String>) entry.getValue()) {
+                if (fName.equals(s)) {
+                    key = (String) entry.getKey();
+                    break;
+                }
+            }
+        }
+        return key;
     }
 
 
