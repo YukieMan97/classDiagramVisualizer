@@ -24,6 +24,8 @@ public class ClassRepresentation {
 
     private int size;
 
+    public String testField;
+
     public ClassRepresentation(String name) {
         this.name = name;
         this.classesReturnedByMethods = new Hashtable<>();
@@ -34,6 +36,7 @@ public class ClassRepresentation {
         this.parentClassList = new ArrayList<String>();
         this.parentInterfaceList = new ArrayList<String>();
         this.fieldNames = new ArrayList<String>();
+
     }
 
     public String getName() {

@@ -163,6 +163,15 @@ public class ASTProcessor {
             curMethodName = name;
             curMethodRep = new MethodRepresentation(name);
 
+            NodeList<Modifier> mods = md.getModifiers();
+            for (Modifier m : mods) {
+                if (m.getKeyword().asString().equalsIgnoreCase("public")) {
+                    curMethodRep.setPrivate(false);
+                } else if (m.getKeyword().asString().equalsIgnoreCase("private")) {
+                    curMethodRep.setPrivate(true);
+                }
+            }
+
             Optional<Node> parentNode = md.getParentNode();
             Node parent = parentNode.get();
             String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
@@ -286,6 +295,20 @@ public class ASTProcessor {
 
             private String getRelevantScopeName(Expression scope) {
                 List<Node> nodes = scope.getChildNodes();
+                Node firstNode = nodes.get(0);
+                String fnn = firstNode.toString();
+                if (curMethodRep.getLocalVars().containsKey(fnn)) {
+
+
+                } else if (curMethodRep.getArgumentNames().containsKey(fnn)) {
+
+                } else if (parentClassRep.getClassesUsedAsPrivateFields().containsKey(fnn)) {
+
+                } else if (parentClassRep.getClassesUsedAsPublicFields().containsKey(fnn)) {
+
+                } else {
+                    return "";
+                }
                 return "placeholder";
 
             }
