@@ -31,10 +31,6 @@ public class ASTProcessor {
         classTrees = new ArrayList<CompilationUnit>();
     }
 
-    private void testMethod() {
-        String s = curNode.testMethod.getName();
-
-    }
 
 
     public ArrayList<CompilationUnit> createCompilationUnits(ArrayList<String> paths) throws FileNotFoundException {
@@ -53,7 +49,6 @@ public class ASTProcessor {
             ArrayList<CompilationUnit> cus = createCompilationUnits(paths);
             VoidVisitor<Hashtable<String, ClassRepresentation>> namer = new ClassNodeNamer();
             ArrayList<CompilationUnit> classTrees = new ArrayList<CompilationUnit>();
-            curNode = new ClassRepresentation("test");
             MethodNamer methodNamer = new MethodNamer();
             for (CompilationUnit cu : cus) {
                 namer.visit(cu, classRepresentations);

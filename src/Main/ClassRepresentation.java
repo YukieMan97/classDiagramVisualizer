@@ -24,7 +24,6 @@ public class ClassRepresentation {
 
     private int size;
 
-    public MethodRepresentation testMethod;
 
     public ClassRepresentation(String name) {
         this.name = name;
@@ -36,7 +35,6 @@ public class ClassRepresentation {
         this.parentClassList = new ArrayList<String>();
         this.parentInterfaceList = new ArrayList<String>();
         this.fieldNames = new ArrayList<String>();
-        testMethod = new MethodRepresentation("Test");
 
     }
 
