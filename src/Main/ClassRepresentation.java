@@ -63,8 +63,9 @@ public class ClassRepresentation {
         return size;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setSize() {
+        this.size += fieldNames.size();
+        this.size += this.methodNames.size() * 2;
     }
 
 
@@ -170,6 +171,7 @@ public class ClassRepresentation {
         }
         return key;
     }
+
 
 
 
