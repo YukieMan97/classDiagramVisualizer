@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 public class MethodRepresentation {
 
@@ -8,7 +9,9 @@ public class MethodRepresentation {
     private ArrayList<String> methodsThatCallThis;
     private ArrayList<String> methodsThisCalls;
     private ArrayList<String> argumentNames;
-    private ArrayList<String> localVarNames;
+    //key is localVarName, value is types
+    private Hashtable<String, String> localVars;
+    //Its own fields used, not that of any argument or local variable
     private ArrayList<String> usedFields;
     private boolean isPrivate;
 
@@ -19,7 +22,7 @@ public class MethodRepresentation {
         this.methodsThisCalls = new ArrayList<String>();
         this.argumentNames = new ArrayList<String>();
         this.usedFields = new ArrayList<String>();
-        this.localVarNames = new ArrayList<String>();
+        this.localVars = new Hashtable<String, String>();
     }
 
 
@@ -80,13 +83,13 @@ public class MethodRepresentation {
         }
     }
 
-    public ArrayList<String> getLocalVarNames() {
-        return this.localVarNames;
+    public Hashtable<String, String> getLocalVars() {
+        return this.localVars;
     }
 
-    public void addToLocalVarNames(String varName) {
-        if (!this.localVarNames.contains(varName)) {
-            this.localVarNames.add(varName);
+    public void addToLocalVarNames(String varName, String typeName) {
+        if (!this.localVars.containsKey(varName)) {
+            localVars.put(varName, typeName);
         }
     }
 

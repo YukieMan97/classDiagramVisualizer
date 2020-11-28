@@ -4,7 +4,9 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -177,6 +179,9 @@ public class ASTProcessor {
                     vdv.visit(md, parentClassRep);
                 }
                 UsedFieldsVisitor ufv = new UsedFieldsVisitor();
+                ufv.visit(md, curMethodRep);
+                MethodCallVisitor mcv = new MethodCallVisitor();
+                mcv.visit(md, curMethodRep);
             }
 
             private class variableDeclarationVisitorForLocalVariable extends VoidVisitorAdapter<ClassRepresentation> {
@@ -210,7 +215,7 @@ public class ASTProcessor {
                         String name = c.getNameAsString();
                         if (classRepresentations.containsKey(name)) {
                             parentClassRep.addToClassesUsedAsLocalVariables(name, curMethodName);
-                            curMethodRep.addToLocalVarNames(varName);
+                            curMethodRep.addToLocalVarNames(varName, name);
                         }
 
                     }
@@ -223,11 +228,20 @@ public class ASTProcessor {
                 public void visit(FieldAccessExpr fae, MethodRepresentation mr) {
                     super.visit(fae, mr);
                     String calleeName = fae.getScope().toString();
-                    if (calleeName == "this") {
+                    if (calleeName.equalsIgnoreCase("this")) {
                         curMethodRep.addToUsedFields(fae.getNameAsString());
                     }
             }
 
+            }
+
+            private class MethodCallVisitor extends VoidVisitorAdapter<MethodRepresentation> {
+                @Override
+                public void visit(MethodCallExpr call, MethodRepresentation mr) {
+                    super.visit(call, mr);
+                    String methodName = call.getNameAsString();
+                    Optional<Expression> scope = call.getScope();
+                }
             }
 
         }
