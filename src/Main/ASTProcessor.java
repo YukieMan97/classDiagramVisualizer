@@ -4,7 +4,7 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -18,11 +18,16 @@ import java.util.Optional;
 public class ASTProcessor {
     private ClassRepresentation curNode;
     private ArrayList<CompilationUnit> classTrees;
+
+    //key  is "<Parent class name> : <method name>" value is method representation, this
+    // is so that classes can have methods with the same name;
     private Hashtable<String, MethodRepresentation> methodRepresentations;
+
     private Hashtable<String, ClassRepresentation> classRepresentations;
 
     public ASTProcessor() {
         classRepresentations = new Hashtable<String, ClassRepresentation>();
+        methodRepresentations = new Hashtable<String, MethodRepresentation>();
         classTrees = new ArrayList<CompilationUnit>();
     }
 
@@ -137,6 +142,10 @@ public class ASTProcessor {
 
         private class MethodProcessor extends VoidVisitorAdapter<Void> {
             private String curMethodName;
+            private MethodRepresentation curMethodRep;
+            private ClassRepresentation parentClassRep;
+            private ArrayList<String> localVars;
+           // private ArrayList<>
 
             @Override
             public void visit(MethodDeclaration md, Void arg) {
@@ -144,24 +153,30 @@ public class ASTProcessor {
               //  MethodRepresentation curMethodRep = new MethodRepresentation();
                 String name = md.getNameAsString();
                 curMethodName = name;
-                MethodRepresentation curMethodRep = new MethodRepresentation(name);
+                curMethodRep = new MethodRepresentation(name);
+
                 Optional<Node> parentNode = md.getParentNode();
                 Node parent = parentNode.get();
                 String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
+                parentClassRep = classRepresentations.get(parentName);
+
+                methodRepresentations.put(parentClassRep.getName() +": " + curMethodName, curMethodRep);
                 String type = md.getType().toString();
-                ClassRepresentation parentRep = classRepresentations.get(parentName);
                 if (classRepresentations.containsKey(type)) {
-                    parentRep.addToClassesReturnedByMethods(type, name);
+                    parentClassRep.addToClassesReturnedByMethods(type, name);
                 }
                 NodeList<Parameter> parameters = md.getParameters();
                 for (Parameter p : parameters) {
                     String pTypeName = p.getType().toString();
                     if (classRepresentations.containsKey(pTypeName)) {
-                        parentRep.addToClassesUsedAsArguments(pTypeName, name);
+                        parentClassRep.addToClassesUsedAsArguments(pTypeName, name);
+                        curMethodRep.addToUsedClasses(pTypeName);
+                        curMethodRep.addToArgumentNames(name);
                     }
                     variableDeclarationVisitorForLocalVariable vdv = new variableDeclarationVisitorForLocalVariable();
-                    vdv.visit(md, parentRep);
+                    vdv.visit(md, parentClassRep);
                 }
+                UsedFieldsVisitor ufv = new UsedFieldsVisitor();
             }
 
             private class variableDeclarationVisitorForLocalVariable extends VoidVisitorAdapter<ClassRepresentation> {
@@ -175,26 +190,43 @@ public class ASTProcessor {
                 @Override
                 public void visit(VariableDeclarator vd, ClassRepresentation cr) {
                     super.visit(vd, cr);
-                    tv.visit(vd, cr);
+                    String varName = vd.getNameAsString();
+
+                    tv.visit(vd, varName);
                 }
 
-                @Override
+                /*@Override
                 public void visit(VariableDeclarationExpr vde, ClassRepresentation cr) {
                     super.visit(vde, cr);
                     tv.visit(vde, cr);
-                }
+                }*/
 
 
-                private class TypeVisitor extends VoidVisitorAdapter<ClassRepresentation> {
+                private class TypeVisitor extends VoidVisitorAdapter<String> {
+
                     @Override
-                    public void visit(ClassOrInterfaceType c, ClassRepresentation cr) {
-                        super.visit(c, cr);
+                    public void visit(ClassOrInterfaceType c, String varName ) {
+                        super.visit(c, varName);
                         String name = c.getNameAsString();
                         if (classRepresentations.containsKey(name)) {
-                            cr.addToClassesUsedAsLocalVariables(name, curMethodName);
+                            parentClassRep.addToClassesUsedAsLocalVariables(name, curMethodName);
+                            curMethodRep.addToLocalVarNames(varName);
                         }
+
                     }
                 }
+
+            }
+
+            private class UsedFieldsVisitor extends VoidVisitorAdapter<MethodRepresentation> {
+                @Override
+                public void visit(FieldAccessExpr fae, MethodRepresentation mr) {
+                    super.visit(fae, mr);
+                    String calleeName = fae.getScope().toString();
+                    if (calleeName == "this") {
+                        curMethodRep.addToUsedFields(fae.getNameAsString());
+                    }
+            }
 
             }
 

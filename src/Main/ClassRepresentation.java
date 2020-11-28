@@ -14,32 +14,12 @@ public class ClassRepresentation {
     private Hashtable <String,ArrayList<String>>  classesReturnedByMethods;
     //key is class name, value is names of methods that use it as variable
     private Hashtable <String,ArrayList<String>> classesUsedAsLocalVariables;
-    //Key is class name, value is name of method that takes it as an argument
+    //Key is class name, value is names of methods that take it as an argument
     private Hashtable <String,ArrayList<String>>classesUsedAsArguments;
     private String name;
 
     private ArrayList<String> methodNames;
-
-    public ArrayList<MethodRepresentation> getMethods() {
-        return methods;
-    }
-
-    public void addToMethods(MethodRepresentation method) {
-        this.methodNames.add(method.getName());
-        this.methods.add(method);
-    }
-
-
-    //This stores methodNodes
-    private ArrayList<MethodRepresentation> methods;
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
+    private ArrayList<String> fieldNames;
 
     private int size;
 
@@ -52,7 +32,36 @@ public class ClassRepresentation {
         this.classesUsedAsLocalVariables = new Hashtable<>();
         this.parentClassList = new ArrayList<String>();
         this.parentInterfaceList = new ArrayList<String>();
+        this.fieldNames = new ArrayList<String>();
     }
+
+    public String getName() {
+        return this.name;
+    }
+
+    private ArrayList<MethodRepresentation> methods;
+
+    public ArrayList<MethodRepresentation> getMethods() {
+        return methods;
+    }
+
+    public void addToMethods(MethodRepresentation method) {
+        this.methodNames.add(method.getName());
+        this.methods.add(method);
+    }
+
+    public boolean hasMethod(String methodName) {
+        return this.methodNames.contains(methodName);
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
 
     public Hashtable<String, ArrayList<String>> getClassesUsedAsPublicFields() {
         return this.classesUsedAsPublicFields;
@@ -87,6 +96,7 @@ public class ClassRepresentation {
             this.classesUsedAsPublicFields.put(className, new ArrayList<String>());
         }
         this.classesUsedAsPublicFields.get(className).add(fieldName);
+        this.fieldNames.add(fieldName);
     }
 
     public void addToClassesUsedAsPrivateFields(String className, String fieldName) {
@@ -94,6 +104,7 @@ public class ClassRepresentation {
             this.classesUsedAsPrivateFields.put(className, new ArrayList<String>());
         }
         this.classesUsedAsPrivateFields.get(className).add(fieldName);
+        this.fieldNames.add(fieldName);
     }
 
     public void addToClassesUsedAsArguments(String className, String methodName) {
