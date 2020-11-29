@@ -111,7 +111,7 @@ public class Main extends Application {
 
         // create parent circle 3, which is basically the third class
         Circle circle3 = createCircle(900, 300, P_CIRCLE_RADIUS, Color.PEACHPUFF);
-        Text text3 = createText(900, 300, astp.getRepresentations().get("Program").getName());
+        Text text3 = createText(900, 300, "Hard-code");
 
         // create first child public class circle and text
         Circle publicCircle3a = createPublicCircle(900, 300, C_CIRCLE_RADIUS, publicColor, circle3, text3);

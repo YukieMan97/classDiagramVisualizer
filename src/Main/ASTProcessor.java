@@ -333,7 +333,9 @@ public class ASTProcessor {
                 }
                 if (nodes.size() == 1) {
                     curMethodRep.addToMethodsThisCalls(methodName, typeName);
-                    methodRepresentations.get(typeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                    if (methodRepresentations.get(typeName + ": " + methodName) != null) {
+                        methodRepresentations.get(typeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                    }
                 } else {
                     ClassRepresentation lastType = classRepresentations.get(typeName);
                     for (int i = 1; i < nodes.size(); i++) {
