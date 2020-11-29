@@ -1,3 +1,5 @@
+package Main;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
@@ -22,9 +24,10 @@ public class ClassRepresentation {
     private ArrayList<String> methodNames;
     private ArrayList<String> fieldNames;
 
+    private ArrayList<MethodRepresentation> methods;
+
     private int size;
 
-    public MethodRepresentation testMethod;
 
     public ClassRepresentation(String name) {
         this.name = name;
@@ -36,7 +39,8 @@ public class ClassRepresentation {
         this.parentClassList = new ArrayList<String>();
         this.parentInterfaceList = new ArrayList<String>();
         this.fieldNames = new ArrayList<String>();
-        testMethod = new MethodRepresentation("Test");
+        this.methodNames = new ArrayList<String>();
+        this.methods = new ArrayList<MethodRepresentation>();
 
     }
 
@@ -44,7 +48,6 @@ public class ClassRepresentation {
         return this.name;
     }
 
-    private ArrayList<MethodRepresentation> methods;
 
     public ArrayList<MethodRepresentation> getMethods() {
         return methods;
@@ -63,10 +66,10 @@ public class ClassRepresentation {
         return size;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public void setSize() {
+        this.size += fieldNames.size();
+        this.size += this.methodNames.size() * 2;
     }
-
 
     public Hashtable<String, ArrayList<String>> getClassesUsedAsPublicFields() {
         return this.classesUsedAsPublicFields;
@@ -170,6 +173,7 @@ public class ClassRepresentation {
         }
         return key;
     }
+
 
 
 

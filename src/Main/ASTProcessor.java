@@ -1,3 +1,5 @@
+package Main;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
@@ -31,11 +33,6 @@ public class ASTProcessor {
         classTrees = new ArrayList<CompilationUnit>();
     }
 
-    private void testMethod() {
-        String s = curNode.testMethod.getName();
-
-    }
-
 
     public ArrayList<CompilationUnit> createCompilationUnits(ArrayList<String> paths) throws FileNotFoundException {
         ArrayList<CompilationUnit> results = new ArrayList<CompilationUnit>();
@@ -53,7 +50,6 @@ public class ASTProcessor {
             ArrayList<CompilationUnit> cus = createCompilationUnits(paths);
             VoidVisitor<Hashtable<String, ClassRepresentation>> namer = new ClassNodeNamer();
             ArrayList<CompilationUnit> classTrees = new ArrayList<CompilationUnit>();
-            curNode = new ClassRepresentation("test");
             MethodNamer methodNamer = new MethodNamer();
             for (CompilationUnit cu : cus) {
                 namer.visit(cu, classRepresentations);
@@ -179,8 +175,9 @@ public class ASTProcessor {
             Node parent = parentNode.get();
             String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
             parentClassRep = classRepresentations.get(parentName);
-
             curMethodRep = methodRepresentations.get(parentName + ": " + name);
+            parentClassRep.addToMethods(curMethodRep);
+
 
 
             NodeList<Modifier> mods = md.getModifiers();
@@ -211,6 +208,7 @@ public class ASTProcessor {
             ufv.visit(md, curMethodRep);
             MethodCallVisitor mcv = new MethodCallVisitor();
             mcv.visit(md, curMethodRep);
+
         }
 
         private class variableDeclarationVisitorForLocalVariable extends VoidVisitorAdapter<ClassRepresentation> {
@@ -335,7 +333,9 @@ public class ASTProcessor {
                 }
                 if (nodes.size() == 1) {
                     curMethodRep.addToMethodsThisCalls(methodName, typeName);
-                    methodRepresentations.get(typeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                    if (methodRepresentations.get(typeName + ": " + methodName) != null) {
+                        methodRepresentations.get(typeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                    }
                 } else {
                     ClassRepresentation lastType = classRepresentations.get(typeName);
                     for (int i = 1; i < nodes.size(); i++) {

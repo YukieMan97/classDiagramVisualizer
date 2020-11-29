@@ -1,3 +1,5 @@
+package Main;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -18,7 +20,6 @@ public class MethodRepresentation {
     private ArrayList<String> usedFields;
     private boolean isPrivate;
 
-    public String testString;
 
     public MethodRepresentation(String name) {
         this.name = name;
@@ -28,7 +29,6 @@ public class MethodRepresentation {
         this.argumentNames = new Hashtable<String, String>();
         this.usedFields = new ArrayList<String>();
         this.localVars = new Hashtable<String, String>();
-        testString = "test";
     }
 
 
