@@ -1,6 +1,9 @@
 package Main;
 
+import PannableFeatures.MovableCanvas;
+import PannableFeatures.SceneActions;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
@@ -14,13 +17,13 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import pannableFeatures.MovableCanvas;
-import pannableFeatures.SceneActions;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.StrictMath.abs;
+import static java.lang.StrictMath.round;
 
 public class Main extends Application {
 
@@ -29,9 +32,15 @@ public class Main extends Application {
     public static final double P_CIRCLE_RADIUS = 100;                // parent circle
     public static final double C_CIRCLE_RADIUS = 20;                 // child circle
     public static final double C_SQUARE_SIZE = C_CIRCLE_RADIUS + 15; // child square
+    public static final double MIN_RANDOM = -1000;
+    public static final double MAX_RANDOM = 1000;
     public static final Color STROKE_COLOR = Color.GRAY;
     public static final Color EXTENDS_COLOR = Color.STEELBLUE;
     private static ASTProcessor astp;
+    public static  final Color circle1HoverColor = Color.HONEYDEW;
+    public static  final Color publicColor = Color.SEAGREEN;
+    public static  final Color privateColor = Color.ROYALBLUE;
+    private ArrayList<Circle> parentClasses = new ArrayList<>();
 
     public static void main(String[] args) {
         FileNavigator FN = new FileNavigator();
@@ -53,7 +62,7 @@ public class Main extends Application {
         // create sample nodes that can be dragged
 //        NodeActions nodeActions = new NodeActions(canvas);
 //        drawShapes(canvas, nodeActions, root);
-        drawShapes(canvas, root);
+        drawShapes(canvas);
 
         root.getChildren().add(canvas);
 
@@ -70,83 +79,125 @@ public class Main extends Application {
 //        canvas.createGrid();
     }
 
-    public void drawShapes(AnchorPane canvas, Group root) {
-        Color circle1HoverColor = Color.HONEYDEW;
-        Color publicColor = Color.SEAGREEN;
-        Color privateColor = Color.ROYALBLUE;
+    public void drawShapes(AnchorPane canvas) {
+        // randomly generate classes to finish implementation of checkCollision
+        // generate random string for texts for now
+        Set<String> classKeys = astp.getClassRepresentations().keySet();
+        for (String key : classKeys) {
+            // step 1: create circle for class
+            double randomX = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
+            double randomY = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
+            // same radius for all circles
+            Circle circle = createClassShape(randomX, randomY);
 
+            double parentX = circle.getCenterX();
+            double parentY = circle.getCenterY();
 
-        // create parent circle 1, which is basically the first class
-        Circle circle1 = createCircle(100, 300, P_CIRCLE_RADIUS, Color.PALEGREEN);
-        Text text1 = createText(100, 300, "Circle 1");
+            // step 2: text for class name
+            Text className = createText(parentX, parentY, key);
+            canvas.getChildren().addAll(circle, className);
 
+            // step 3: shapes and texts for fields and field names
+            int numFields = (int) round(ThreadLocalRandom.current().nextDouble(1, 4));
+            for (int j = 0; j < numFields; j++) {
+                int chooseMethod = (int) round(ThreadLocalRandom.current().nextDouble(0, 1));
+                int fieldNum = j + 1;
+                if (chooseMethod == 1) {
+                    // create public field node
+                    Circle publicCircle = createPublicCircle(parentX, parentY, C_CIRCLE_RADIUS, publicColor, circle, className);
+                    Text fieldName = createText(parentX, parentY, "field " + fieldNum);
+                    canvas.getChildren().addAll(publicCircle);
 
-        // create first child public class circle and text
-        Circle publicCircle1a = createPublicCircle(100, 300, C_CIRCLE_RADIUS, publicColor, circle1, text1);
-        Text text1a = createText(100, 300, "public field 1");
+                    // handles hovering over children nodes
+                    registerHandler(canvas, publicCircle, publicColor, circle1HoverColor, fieldName);
+                }
+                else {
+                    // create private field node
+                    Rectangle privateField = createPrivateSquare(parentX, parentY, C_SQUARE_SIZE, privateColor, circle, className);
+                    Text fieldName = createText(parentX, parentY, "field " + fieldNum);
+                    canvas.getChildren().addAll(privateField);
 
+                    // handles hovering over children nodes
+                    registerHandler(canvas, privateField, privateColor, circle1HoverColor, fieldName);
+                }
+            }
 
-        // create second child private class square and text
-        Rectangle privateSquare1b = createPrivateSquare(100, 300, C_SQUARE_SIZE, privateColor, circle1, text1);
-        Text text1b = createText(100, 300, "private field 1");
+            // TODO step 4: shapes and texts for methods and method names (Avi implementing rn)
 
-        // create third child public class circle and text
-        Circle publicCircle1c = createPublicCircle(100, 300, C_CIRCLE_RADIUS, publicColor, circle1, text1);
-        Text text1c = createText(100, 300, "public field 2");
+        }
 
-        // add all nodes related to the first class to the canvas
-        canvas.getChildren().addAll(circle1, publicCircle1a, privateSquare1b, publicCircle1c, text1);
+        // creates connection between superClass (class1) and subClass (class2)
+        for (int k = 0; k < 5; k++) {
+            int parentSize = parentClasses.size();
+            int randomClass1 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
+            int randomClass2 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
+            if (randomClass1 == (randomClass2)) {
+                while (randomClass1 == randomClass2) {
+                    randomClass1 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
+                    randomClass2 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
+                    Circle class1 = parentClasses.get(randomClass1);
+                    Circle class2 = parentClasses.get(randomClass2);
+                    connectClasses(canvas, class1, class2);
+                }
+            }
+            else {
+                Circle class1 = parentClasses.get(randomClass1);
+                Circle class2 = parentClasses.get(randomClass2);
+                connectClasses(canvas, class1, class2);
+            }
+        }
+    }
 
-        // create parent circle 2, which is basically the second class
-        Circle circle2 = createCircle(500, 300, P_CIRCLE_RADIUS, Color.LAVENDER);
-        Text text2 = createText(500, 300, "Circle 2");
+    private Circle createClassShape(double x, double y) {
+        Circle circle = createCircle(x, y, P_CIRCLE_RADIUS, Color.PEACHPUFF);
+        checkCollision(circle);
+        parentClasses.add(circle);
+        return circle;
+    }
 
-        // create first child private class square and text
-        Rectangle privateSquare2a = createPrivateSquare(500, 300, C_SQUARE_SIZE, privateColor, circle2, text2);
-        Text text2a = createText(500, 300, "private field 1");
+    // TODO: once coordinates have changed, need to checkCollision with every parent class again
+    private Void checkCollision(Circle circle) {
+        if (parentClasses.isEmpty()) {
+            return null;
+        }
+        else {
+            boolean keepChecking = true;
+//            while (true) {
+                for (Circle currCircle : parentClasses) {
+                    if (detectCollision(circle, currCircle)) {
+                        double randomX = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
+                        double randomY = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
+                        circle.setCenterX(randomX);
+                        circle.setCenterX(randomY);
+                   }
+                }
+//            }
+        }
+        return null;
+    }
 
-        // add all nodes related to the second class to the canvas
-        canvas.getChildren().addAll(circle2, privateSquare2a, text2);
+    public boolean detectCollision(Circle circle, Circle currCircle) {
 
+        // determine it's size
+        Point2D otherCenter = circle.localToScene(circle.getCenterX(), circle.getCenterY());
+        Point2D thisCenter = currCircle.localToScene(currCircle.getCenterX(), currCircle.getCenterY());
+        double dx = otherCenter.getX() - thisCenter.getX();
+        double dy = otherCenter.getY() - thisCenter.getY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        double minDist = circle.getRadius() + currCircle.getRadius();
 
-        // create parent circle 3, which is basically the third class
-        Circle circle3 = createCircle(900, 300, P_CIRCLE_RADIUS, Color.PEACHPUFF);
-        Text text3 = createText(900, 300, "Hard-code");
+//        System.out.println("-------------------");
+//        System.out.println("circle.localToScene(...).getX() & .getY(): [" + otherCenter.getX() + ", " + otherCenter.getY() + "]" );
+//        System.out.println("circle.getLayoutX() & .getLayoutY(): [" + circle.getLayoutX() + ", " + circle.getLayoutY() + "]" );
+//        System.out.println("circle.getCenterX() & .getCenterY(): [" + circle.getCenterX() + ", " + circle.getCenterY() + "]" );
+//        System.out.println("currCircle.localToScene(...).getX() & .getY(): [" + thisCenter.getX() + ", " + thisCenter.getY() + "]" );
+//        System.out.println("currCircle.getLayoutX() & .getLayoutY(): [" + currCircle.getLayoutX() + ", " + currCircle.getLayoutY() + "]" );
+//        System.out.println("currCircle.getCenterX() & .getCenterY(): [" + currCircle.getCenterX() + ", " + currCircle.getCenterY() + "]" );
+//        System.out.println("-------------------");
 
-        // create first child public class circle and text
-        Circle publicCircle3a = createPublicCircle(900, 300, C_CIRCLE_RADIUS, publicColor, circle3, text3);
-        Text text3a = createText(900, 300, "public field 1");
-
-        // create second child private class square and text
-        Rectangle privateSquare3b = createPrivateSquare(900, 300, C_SQUARE_SIZE, privateColor, circle3, text3);
-        Text text3b = createText(900, 300, "private field 1");
-
-        // add all nodes related to the second class to the canvas
-        canvas.getChildren().addAll(circle3, publicCircle3a, privateSquare3b, text3);
-
-
-        // takes in a canvas, superClass, subClass to connect superClass to subClass
-        // uses EXTENDS_COLOR
-        connectClasses(canvas, circle1, circle3);
-        connectClasses(canvas, circle2, circle3);
-
-
-        // handles hovering over children nodes
-        registerHandler(canvas, publicCircle1a, publicColor,circle1HoverColor, text1a);
-        registerHandler(canvas, privateSquare1b, privateColor, circle1HoverColor, text1b);
-        registerHandler(canvas, publicCircle1c, publicColor, circle1HoverColor, text1c);
-        registerHandler(canvas, privateSquare2a, privateColor, circle1HoverColor, text2a);
-        registerHandler(canvas, publicCircle3a, publicColor, circle1HoverColor, text3a);
-        registerHandler(canvas, privateSquare3b, privateColor, circle1HoverColor, text3b);
-
-
-        // ignore for now, allows us to move the circle itself
-//        circle1.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeActions.getOnMousePressedEventHandler());
-//        circle1.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeActions.getOnMouseDraggedEventHandler());
-//        circle2.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeActions.getOnMousePressedEventHandler());
-//        circle2.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeActions.getOnMouseDraggedEventHandler());
-//        circle3.addEventFilter(MouseEvent.MOUSE_PRESSED, nodeActions.getOnMousePressedEventHandler());
-//        circle3.addEventFilter(MouseEvent.MOUSE_DRAGGED, nodeActions.getOnMouseDraggedEventHandler());
+        boolean hasCollided = (distance < minDist);
+        System.out.println(hasCollided);
+        return hasCollided;
     }
 
 
@@ -214,7 +265,7 @@ public class Main extends Application {
 
         path.getElements().add(moveTo);
         path.getElements().add(quadTo);
-        path.setStrokeWidth(2.5);
+        path.setStrokeWidth(5);
         path.setStroke(EXTENDS_COLOR);
 
         // Create the Hexagon for every  class
@@ -226,14 +277,14 @@ public class Main extends Application {
 
     }
 
-    // create a public circle to represent public fields of the parent class
-    private Circle createPublicCircle(double x, double y, double radius, Color c, Circle parentCircle, Text text) {
+//     create a public circle to represent public fields of the parent class
+    public Circle createPublicCircle(double x, double y, double radius, Color c, Circle parentCircle, Text text) {
         // create circle
-        final Circle privateCircle = new Circle(x, y, radius, c);
-        privateCircle.setStroke(STROKE_COLOR);
-        privateCircle.opacityProperty().set(0.6);
-        privateCircle.setStrokeWidth(2.5);
-        privateCircle.setStrokeType(StrokeType.INSIDE);
+        final Circle publicCircle = new Circle(x, y, radius, c);
+        publicCircle.setStroke(STROKE_COLOR);
+        publicCircle.opacityProperty().set(0.6);
+        publicCircle.setStrokeWidth(2.5);
+        publicCircle.setStrokeType(StrokeType.INSIDE);
 
         // set up for random spawning within the parent
         double textW = text.getBoundsInLocal().getWidth();
@@ -250,11 +301,12 @@ public class Main extends Application {
         while (randomY < -1*(circleRadius*0.7) && randomY < (circleRadius*0.7)) {
             randomY = ThreadLocalRandom.current().nextDouble(min, max);
         }
-        privateCircle.setLayoutX(randomX);
-        privateCircle.setLayoutY(randomY);
+        publicCircle.setLayoutX(randomX);
+        publicCircle.setLayoutY(randomY);
 
-        return privateCircle;
+        return publicCircle;
     }
+
 
     // create a private square to represent private fields of parent class
     private Rectangle createPrivateSquare(double x, double y, double radius, Color c, Circle parentCircle, Text text) {
@@ -290,7 +342,7 @@ public class Main extends Application {
     private Text createText(double x, double y, String s) {
         final Text text = new Text(s);
 
-        text.setFont(new Font("Tahoma",15));
+        text.setFont(new Font("Tahoma",12));
         text.setBoundsType(TextBoundsType.VISUAL);
         centerText(text, x, y);
 
@@ -328,18 +380,18 @@ public class Main extends Application {
         double sizeChange = 5;
         double textX = text.getX();
         double textY = text.getY();
+        text.setX(textX + (textX * 20));
+        text.setY(textY + (textY * 20));
+        text.setFont(new Font("Arial Black", 30));
+        text.setFill(Color.MISTYROSE);
+        text.setStroke(Color.BLACK);
+        text.setStrokeWidth(1.5);
 
         s.setOnMouseEntered( mouseEvent -> {
             s.setFill(hoverColor);
 
             // shows name of field
             // problem: keeps updating when mouse is close to text
-            text.setX(textX + (textX * 20));
-            text.setY(textY - (textX * 20));
-            text.setFont(new Font("Arial Black", 30));
-            text.setFill(Color.MISTYROSE);
-            text.setStroke(Color.BLACK);
-            text.setStrokeWidth(1.5);
             canvas.getChildren().add(text);
 
             // increases size of shape when hovered
