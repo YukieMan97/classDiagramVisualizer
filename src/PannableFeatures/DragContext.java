@@ -1,4 +1,4 @@
-package pannableFeatures;
+package PannableFeatures;
 
 /**
  * Mouse drag context user for scene and nodes
