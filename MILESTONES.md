@@ -38,14 +38,71 @@ Summary of progress so far:
 - Need to meet up with team next week to discuss this idea in full and complete milestone 3 tasks
 
 ## Milestone 3
-Mockup of analysis design:
-- Our program design is to analyze code where we can split up classes (class coupling) and also detect structural design patterns such as composite design pattern. Since Structural Design Patterns provides a simple  way to realize relationships between entities, it would be great to merge this concept and class coupling.  We know we have to look for sequence of calls to determine design patterns. As for class coupling, we will determine which classes uses extends, interfaces, etc.
+Mockup of analysis design/visualization:
+![visual1](https://i.gyazo.com/72786cbc795c9011b9b8d96e49b73cfc.png)
+- Each class will be represented by a circle of a unique color whose size will be proportional to the size of the class (number of fields and methods).
+- The class name will also be displayed within the circle
+- Fields will be represented by shapes inside of the class circle, and methods will be shapes outside of the class circle attached by solid lines. 
+- The shape of the field or method can be used to convey useful information such as visibility modifiers (private and public).
 
-Mockup of visualisation: 
-- UML diagrams is our still base idea for visualization as mentioned in Milestone 1. However, we will need to brainstorm more ideas to make our visualizaiton completely unique, so that is doesn't look like a UML diagram at first glance. 
+![visual2](https://i.gyazo.com/0bd09175d85c59b3eeedacfab5bb6938.png)
+- Interactive aspect: The user will be able to click on a class to highlight all classes, fields and methods that depend on it (Image 1).
+- Alternatively, the user will also be able to click on a method of any class to highlight classes on which that particular method depends, methods from other classes that call or are called by that given method, and finally fields within its own class that the method uses.
+
 
 Notes about first user study: 
-- User study #1: finds that the visualization aspect will be useful for programmers who are unfamiliar with a new project, believes that it is a good idea to "determine which classes uses extends, interfaces, etc" to detect class coupling, and seems very abstract at the moment so it is kind of confusing
+- User study #1 (CS College Student): 
+1. I think the project makes a lot of sense, it looks really fun and interesting tbh
+
+2. Maybe as a stretch goal, you have also output a written report containing statistics or data about the visualization. For example, maybe how many lines of code are in each class or how many methods or fields are in each class. Also, Is there a chance you'll run out of  colors for the visualization? That's a concern theoretically if the program is big and then some colors might look really similiar.
+
+3. I think the project is a great way to learn OOP and Java, I like it! (although I dislike working with Java)
+
+- User study #2 (Gr. 12 applying for CS Program):
+1. I'd say the concept of the whole project does seem to make sense, the idea of being able to see what classes/attributes are associated with each other is rly useful. I don't think I have enough knowledge to comment on any problems I'd foresee with the implementation but based on stuff IDEs can do I think that wouldn't be a problem. Also I think a graphical visualization like this is much better than the way an IDE provides information :D
+
+2. I think maybe adding the number of fields and methods each class has next to the name when displaying it would be somewhat useful, especially if larger classes have a lot of stuff associated with it and just trying to count the number of shapes gets a bit confusing since (this is just for me tho idk about for others) I tend to lose track of counting small things like this
+
+3. I really like the simplicity of the idea, being able to provide critical information in a very easy to understand manner will be super helpful! There's not really anything that I dislike about it tbh
+Sry if I can't provide any further information on this as that's pretty much the limit of my knowledge on the topic haha, although please lmk if you need testers later down the line when this becomes a working program, I'd love to try it out!
+
+- User study #3: 
+1. What made sense to me
+ - The basic idea of this project : Visualize the design of a system or segments of it is a well known, frequent, and crucial necessity.
+ - Also isolating the interactions of specific methods or fields : for the same reasons.
+ - Representing information using shapes and colors : Simple visual semantics allows quick and intuitive readability.
+ - Documenting the design of a project in this way automatically : Manually doing this step is laborious and facilitates the introduction of mistakes.
+ 
+2. What didn't make sens (might be irrelevant since I made some assumptions)
+ - How can the shapes representing methods and fields be identified without the corresponding name?
+ - Would it always be preferable that the class with more attributes appears bigger?
+ 
+3. Possible improvements
+ - The most standard visual modeling languages' large size is known to hinder learning. In companies, it often ends up being used with the individual authors' interpretation and sense of what is intuitive. Maybe a possibility to customize the "language's features" would be comfortable (I'm thinking about Square and circle associated with Private and Public).
+ - I find myself questioning the use of colors to differentiate classes from each other. Is it necessary? And couldn't colors, a powerful visual tool, be used more efficiently?
+ 
+4. What I like about this idea 
+ - Having a tool that can do this operation automatically. Even without thinking about making mistakes trying to do it manually, I would bet money that developers would use a lot more often a visual representation as a reference because it's quicker and effortless.
+ - I like the description of the beneficial points of having a visual representation: "getting a feel of OOP principles," "understanding or controlling coupling and cohesion in a system design" ...
+ 
+5. What I dislike or am worried about (again with some assumptions)
+ - Worried that the representation choices will make the visual representation very heavy for big projects, or simply for classes with lots of attributes.
+ - Don't like that the list of attributes for a class seems to be randomly spread in and out arround it. I usually like to have some rules of thumb to be able to search for one specific attribute especially when it lies among many.
 
 Any changes to original analysis/visualisation design: 
-- will need to consider if we want to keep the "detect structural design patterns" aspect in our program because this would be difficult to analyze/find in given code
+- things to consider: colour representation if project is very large, display # of classes/methods/fields/etc., visualize stats/data about program (ex. # lines of code in each class).
+
+## Milestone 4
+Status of implementation:
+- Jeremy got the Java parser working, however Avi thinks Java Swing might be difficult to use for our visualization aspect. So we will need to discuss what language our implementation will be in. 
+- Nov 24th Update: Although our group is inexperienced with React, we have decided to go along with it for our visualization aspect. After discussing with Alex and Kathaerine, we believe it would be much better to learn and implement with React than use Java Swing or some other Java libraries.
+
+Plans for final user study:
+- contact previous users and new users to test our program
+- receive feedback and make changes to our implementation if required
+
+Planned timeline for the remaining days:
+- Before Nov 25th: Complete implementation before Nov 25th with some tests
+- Nov 25th: Complete final user study
+- Nov 25th-26th: Make changes according to final user study feedback
+- Nov 26th-30th: Test our implementation more and make the according fixes
