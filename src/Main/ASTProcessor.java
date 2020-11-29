@@ -1,3 +1,5 @@
+package Main;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
@@ -30,7 +32,6 @@ public class ASTProcessor {
         methodRepresentations = new Hashtable<String, MethodRepresentation>();
         classTrees = new ArrayList<CompilationUnit>();
     }
-
 
 
     public ArrayList<CompilationUnit> createCompilationUnits(ArrayList<String> paths) throws FileNotFoundException {

@@ -1,3 +1,5 @@
+package Main;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
@@ -69,6 +71,9 @@ public class ClassRepresentation {
         this.size += this.methodNames.size() * 2;
     }
 
+    public String getName() { return this.name; }
+
+    private int size;
 
     public Hashtable<String, ArrayList<String>> getClassesUsedAsPublicFields() {
         return this.classesUsedAsPublicFields;
