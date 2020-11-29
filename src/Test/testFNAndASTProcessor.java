@@ -1,3 +1,7 @@
+package Test;
+
+import Main.ASTProcessor;
+import Main.FileNavigator;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

@@ -118,7 +118,8 @@ public class ASTProcessor {
             Node parent = parentNode.get();
             String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
             currentClassRep = classRepresentations.get(parentName);
-            NodeList<Modifier> mods = fd.getModifiers();
+            NodeList<Modifier> mods;
+            mods = fd.getModifiers();
             vdv.visit(fd, mods);
         }
 
