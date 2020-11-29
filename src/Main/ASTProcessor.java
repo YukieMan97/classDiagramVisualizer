@@ -33,6 +33,9 @@ public class ASTProcessor {
         classTrees = new ArrayList<CompilationUnit>();
     }
 
+    public Hashtable<String, ClassRepresentation> getClassRepresentations() { return this.classRepresentations; }
+
+    public Hashtable<String, MethodRepresentation> getMethodRepresentations() { return this.methodRepresentations; }
 
     public ArrayList<CompilationUnit> createCompilationUnits(ArrayList<String> paths) throws FileNotFoundException {
         ArrayList<CompilationUnit> results = new ArrayList<CompilationUnit>();

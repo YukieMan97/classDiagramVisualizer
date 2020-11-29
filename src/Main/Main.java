@@ -1,5 +1,7 @@
 package Main;
 
+import PannableFeatures.MovableCanvas;
+import PannableFeatures.SceneActions;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -15,10 +17,9 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import PannableFeatures.MovableCanvas;
-import PannableFeatures.SceneActions;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.StrictMath.abs;
@@ -81,7 +82,8 @@ public class Main extends Application {
     public void drawShapes(AnchorPane canvas) {
         // randomly generate classes to finish implementation of checkCollision
         // generate random string for texts for now
-        for (int i = 0; i < 7; i++) {
+        Set<String> classKeys = astp.getClassRepresentations().keySet();
+        for (String key : classKeys) {
             // step 1: create circle for class
             double randomX = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
             double randomY = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
@@ -92,8 +94,7 @@ public class Main extends Application {
             double parentY = circle.getCenterY();
 
             // step 2: text for class name
-            int classNum = i + 1;
-            Text className = createText(parentX, parentY, "Class " + classNum);
+            Text className = createText(parentX, parentY, key);
             canvas.getChildren().addAll(circle, className);
 
             // step 3: shapes and texts for fields and field names
@@ -341,7 +342,7 @@ public class Main extends Application {
     private Text createText(double x, double y, String s) {
         final Text text = new Text(s);
 
-        text.setFont(new Font("Tahoma",15));
+        text.setFont(new Font("Tahoma",12));
         text.setBoundsType(TextBoundsType.VISUAL);
         centerText(text, x, y);
 
