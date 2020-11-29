@@ -16,6 +16,7 @@ public class testFNAndASTProcessor {
         System.out.println("Done");
         ASTProcessor astp = new ASTProcessor();
         astp.process(test);
+
     }
 
 }
