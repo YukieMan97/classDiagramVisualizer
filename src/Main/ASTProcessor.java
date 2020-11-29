@@ -33,15 +33,7 @@ public class ASTProcessor {
         classTrees = new ArrayList<CompilationUnit>();
     }
 
-    public Hashtable<String, ClassRepresentation> getRepresentations() {
-        return this.representations;
-    }
-  
-    private void testMethod() {
-        String s = curNode.testMethod.getName();
 
-    }
-  
     public ArrayList<CompilationUnit> createCompilationUnits(ArrayList<String> paths) throws FileNotFoundException {
         ArrayList<CompilationUnit> results = new ArrayList<CompilationUnit>();
         for (String path : paths) {
@@ -58,7 +50,6 @@ public class ASTProcessor {
             ArrayList<CompilationUnit> cus = createCompilationUnits(paths);
             VoidVisitor<Hashtable<String, ClassRepresentation>> namer = new ClassNodeNamer();
             ArrayList<CompilationUnit> classTrees = new ArrayList<CompilationUnit>();
-            curNode = new ClassRepresentation("test");
             MethodNamer methodNamer = new MethodNamer();
             for (CompilationUnit cu : cus) {
                 namer.visit(cu, classRepresentations);
@@ -184,8 +175,9 @@ public class ASTProcessor {
             Node parent = parentNode.get();
             String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
             parentClassRep = classRepresentations.get(parentName);
-
             curMethodRep = methodRepresentations.get(parentName + ": " + name);
+            parentClassRep.addToMethods(curMethodRep);
+
 
 
             NodeList<Modifier> mods = md.getModifiers();
@@ -216,6 +208,7 @@ public class ASTProcessor {
             ufv.visit(md, curMethodRep);
             MethodCallVisitor mcv = new MethodCallVisitor();
             mcv.visit(md, curMethodRep);
+
         }
 
         private class variableDeclarationVisitorForLocalVariable extends VoidVisitorAdapter<ClassRepresentation> {
