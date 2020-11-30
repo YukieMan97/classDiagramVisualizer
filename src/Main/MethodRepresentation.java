@@ -7,16 +7,21 @@ public class MethodRepresentation {
 
     private String name;
 
+    //Note for below: scope is the name of a method callee, it will be
+    //a field name of this methods parent class's field, an argument name
+    // or a local variable name, look at output of ASTProcessor's process method for clarity.
+
+
     private ArrayList<String> usedClasses;
     //key is method name, value is list of scopes
     private Hashtable<String, ArrayList<String>> methodsThatCallThis;
-    //key is scope, value is methodname
+    //key is scope, value is method name(s)
     private Hashtable<String, ArrayList<String>> methodsThisCalls;
     //key is argument name, value is type
     private Hashtable<String, String> argumentNames;
-    //key is localVarName, value is types
+    //key is localVarName, value is type
     private Hashtable<String, String> localVars;
-    //Its own fields used, not that of any argument or local variable
+    //Its own parent class's fields used, not that of any argument or local variable
     private ArrayList<String> usedFields;
     private boolean isPrivate;
 

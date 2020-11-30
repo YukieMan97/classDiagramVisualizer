@@ -223,6 +223,7 @@ public class ASTProcessor {
             ufv.visit(md, curMethodRep);
             MethodCallVisitor mcv = new MethodCallVisitor();
             mcv.visit(md, curMethodRep);
+            parentClassRep.setSize();
 
         }
 
@@ -305,31 +306,6 @@ public class ASTProcessor {
                 } else {
                     curMethodRep.addToMethodsThisCalls(methodName, parentClassRep.getName());
                 }
-
-
-                   /* if (curMethodRep.getLocalVars().containsKey(scopeName)) {
-                        curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getLocalVars().get(scopeName));
-                        if (methodRepresentations.containsKey(curMethodRep.getLocalVars().get(scopeName) + ": " + methodName)) {
-                            methodRepresentations.get(curMethodRep.getLocalVars().get(scopeName) + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                        }
-                    } else if (curMethodRep.getArgumentNames().containsKey(scopeName)) {
-                        curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getArgumentNames().get(scopeName));
-                        if (methodRepresentations.containsKey(curMethodRep.getArgumentNames().get(scopeName) + ": " + methodName)) {
-                            methodRepresentations.get(curMethodRep.getArgumentNames().get(scopeName) + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                        }
-                    } else if (parentClassRep.getClassesUsedAsPrivateFields().containsValue(scopeName)) {
-                        String fName = parentClassRep.getKeyForPrivateFieldName(scopeName);
-                        curMethodRep.addToMethodsThisCalls(methodName, fName);
-                        if (methodRepresentations.containsKey(fName + ": " + methodName)) {
-                            methodRepresentations.get(fName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                        }
-
-                    } else if (parentClassRep.getClassesUsedAsPublicFields().containsValue(scopeName)) {
-                        String fName = parentClassRep.getKeyForPublicFieldName(scopeName);
-                        curMethodRep.addToMethodsThisCalls(methodName, fName);
-                        if (methodRepresentations.containsKey(fName + ": " + methodName)) {
-                            methodRepresentations.get(fName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                        }*/
 
             }
 
