@@ -138,13 +138,13 @@ public class Main extends Application {
                     randomClass2 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
                     Circle class1 = parentClasses.get(randomClass1);
                     Circle class2 = parentClasses.get(randomClass2);
-                    connectClasses(canvas, class1, class2);
+                    connectClasses(canvas, class1, class2, EXTENDS_COLOR);
                 }
             }
             else {
                 Circle class1 = parentClasses.get(randomClass1);
                 Circle class2 = parentClasses.get(randomClass2);
-                connectClasses(canvas, class1, class2);
+                connectClasses(canvas, class1, class2, EXTENDS_COLOR);
             }
         }
     }
@@ -242,7 +242,7 @@ public class Main extends Application {
         return scale;
     }
 
-    private void connectClasses(AnchorPane canvas, Circle superClass, Circle subClass) {
+    private void connectClasses(AnchorPane canvas, Circle superClass, Circle subClass, Color colour) {
         Path path = new Path();
 
         double c1X = superClass.getCenterX();
@@ -267,7 +267,7 @@ public class Main extends Application {
         path.getElements().add(moveTo);
         path.getElements().add(quadTo);
         path.setStrokeWidth(5);
-        path.setStroke(EXTENDS_COLOR);
+        path.setStroke(colour);
 
         // Create the Hexagon for every  class
         Polygon hexagon = createHexagon(superClass);
