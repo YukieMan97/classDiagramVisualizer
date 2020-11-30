@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 public class MovableCanvas extends AnchorPane {
     DoubleProperty scale = new SimpleDoubleProperty(1.0);
 
-
     public MovableCanvas() {
         setPrefSize(Main.WIDTH, Main.HEIGHT);
         setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
