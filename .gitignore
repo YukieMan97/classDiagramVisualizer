@@ -4,6 +4,5 @@
 **/.idea
 !.gitignore
 **/out
-**/Test
 **/target
 *.iml
