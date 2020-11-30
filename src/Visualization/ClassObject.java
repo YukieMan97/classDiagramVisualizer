@@ -64,11 +64,17 @@ public class ClassObject {
     private void checkCollision(Circle circle) {
         for (ClassObject currClass : parentClasses) {
             Circle currCircle = currClass.getClassCircle();
-            if (detectCollision(circle, currCircle)) {
-                double randomX = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
-                double randomY = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
+            double randomX = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
+            double randomY = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
+            circle.setCenterX(randomX);
+            circle.setCenterX(randomY);
+            boolean hit = detectCollision(circle, currCircle);
+            while (hit) {
+                randomX = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
+                randomY = ThreadLocalRandom.current().nextDouble(MIN_RANDOM, MAX_RANDOM);
                 circle.setCenterX(randomX);
                 circle.setCenterX(randomY);
+                hit = detectCollision(circle, currCircle);
             }
         }
     }

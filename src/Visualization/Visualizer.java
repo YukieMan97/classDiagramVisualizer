@@ -70,6 +70,8 @@ public class Visualizer {
             ClassObject classObj = classCircleDictionary.get(key);
             // step 3: shapes and texts for fields and field names
             ClassRepresentation currentClass = astProcessor.getClassRepresentations().get(key);
+            double newRadius = currentClass.getMethods().size()*6 + P_CIRCLE_RADIUS;
+            classObj.getClassCircle().setRadius(newRadius);
             for (String field : currentClass.getClassesUsedAsPublicFields().keySet()) {
                 String publicFieldName = currentClass.getClassesUsedAsPublicFields().get(field).get(0);
                 // create public field node
