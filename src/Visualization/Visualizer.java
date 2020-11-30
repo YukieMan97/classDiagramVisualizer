@@ -21,6 +21,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -65,6 +66,7 @@ public class Visualizer {
         // randomly generate classes to finish implementation of checkCollision
         // generate random string for texts for now
         Set<String> classKeys = astProcessor.getClassRepresentations().keySet();
+        Hashtable<String, Circle> classCircleDictionary = new Hashtable<String, Circle>();
         for (String key : classKeys) {
 
             // step 1: create circle for class
@@ -80,12 +82,24 @@ public class Visualizer {
             Text className = createText(parentX, parentY, key);
             canvas.getChildren().addAll(circle, className);
 
+            classCircleDictionary.put(key, circle);
+        }
+
+        for (String key : classKeys) {
             // step 3: shapes and texts for fields and field names
             ClassRepresentation currentClass = astProcessor.getClassRepresentations().get(key);
+            Circle currentCircle = classCircleDictionary.get(key);
+
+            double parentX = currentCircle.getCenterX();
+            double parentY = currentCircle.getCenterY();
+
+            Text className = createText(parentX, parentY, key);
+
             for (String field : currentClass.getClassesUsedAsPublicFields().keySet()) {
                 String publicFieldName = currentClass.getClassesUsedAsPublicFields().get(field).get(0);
                 // create public field node
-                Circle publicCircle = createPublicCircle(parentX, parentY, C_CIRCLE_RADIUS, publicColor, circle, className);
+
+                Circle publicCircle = createPublicCircle(parentX, parentY, C_CIRCLE_RADIUS, publicColor, currentCircle, className);
                 Text fieldName = createText(parentX, parentY, publicFieldName);
                 canvas.getChildren().addAll(publicCircle);
 
@@ -95,39 +109,40 @@ public class Visualizer {
             for (String field : currentClass.getClassesUsedAsPrivateFields().keySet()) {
                 String privateFieldName = currentClass.getClassesUsedAsPrivateFields().get(field).get(0);
                 // create private field node
-                Rectangle privateField = createPrivateSquare(parentX, parentY, C_SQUARE_SIZE, privateColor, circle, className);
+                Rectangle privateField = createPrivateSquare(parentX, parentY, C_SQUARE_SIZE, privateColor, currentCircle, className);
                 Text fieldName = createText(parentX, parentY, privateFieldName);
                 canvas.getChildren().addAll(privateField);
 
                 // handles hovering over children nodes
                 registerHandler(canvas, privateField, privateColor, circle1HoverColor, fieldName);
             }
+            for (String interfaceName : currentClass.getParentInterfaceList()) {
+                connectClasses(canvas, currentCircle, classCircleDictionary.get(interfaceName), IMPLEMENTS_COLOR);
+            }
+            for (String parentClassNAme : currentClass.getParentClassList()) {
+                connectClasses(canvas, currentCircle, classCircleDictionary.get(parentClassNAme), EXTENDS_COLOR);
+            }
+            for (String s : currentClass.getClassesReturnedByMethodsList().keySet()) {
+                connectClasses(canvas, currentCircle, classCircleDictionary.get(s), RETURNED_BY_METHOD_COLOR);
+            }
+            for (String s : currentClass.getClassesUsedAsArguments().keySet()) {
+                connectClasses(canvas, currentCircle, classCircleDictionary.get(s), TAKES_AS_ARGUMENT_COLOR);
+            }
+            for (String s : currentClass.getClassesUsedAsLocalVariables().keySet()) {
+                connectClasses(canvas, currentCircle, classCircleDictionary.get(s), USED_AS_LOCAL_VARIABLE_COLOR);
+            }
+            for (String s : currentClass.getClassesUsedAsPublicFields().keySet()) {
+                connectClasses(canvas, currentCircle, classCircleDictionary.get(s), USED_AS_PUBLIC_FIELD_COLOR);
+            }
+            for (String s : currentClass.getClassesUsedAsPrivateFields().keySet()) {
+                connectClasses(canvas, currentCircle, classCircleDictionary.get(s), USED_AS_PRIVATE_FIELD_COLOR);
+            }
 
             // TODO step 4: shapes and texts for methods and method names (Avi implementing rn)
 
         }
-
-        // creates connection between superClass (class1) and subClass (class2)
-        for (int k = 0; k < 5; k++) {
-            int parentSize = parentClasses.size();
-            int randomClass1 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
-            int randomClass2 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
-            if (randomClass1 == (randomClass2)) {
-                while (randomClass1 == randomClass2) {
-                    randomClass1 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
-                    randomClass2 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
-                    Circle class1 = parentClasses.get(randomClass1);
-                    Circle class2 = parentClasses.get(randomClass2);
-                    connectClasses(canvas, class1, class2);
-                }
-            }
-            else {
-                Circle class1 = parentClasses.get(randomClass1);
-                Circle class2 = parentClasses.get(randomClass2);
-                connectClasses(canvas, class1, class2);
-            }
-        }
     }
+
 
     private Circle createClassShape(double x, double y) {
         Circle circle = createCircle(x, y, P_CIRCLE_RADIUS, Color.PEACHPUFF);
@@ -239,15 +254,15 @@ public class Visualizer {
         return scale;
     }
 
-    private void connectClasses(AnchorPane canvas, Circle superClass, Circle subClass) {
+    private void connectClasses(AnchorPane canvas, Circle classOne, Circle class2, Color colour) {
         Path path = new Path();
 
-        double c1X = superClass.getCenterX();
-        double c1Y = superClass.getCenterY();
-        double c1Radius = superClass.getRadius();
-        double c2X = subClass.getCenterX();
-        double c2Y = subClass.getCenterY();
-        double c2Radius = superClass.getRadius();
+        double c1X = classOne.getCenterX();
+        double c1Y = classOne.getCenterY();
+        double c1Radius = classOne.getRadius();
+        double c2X = class2.getCenterX();
+        double c2Y = class2.getCenterY();
+        double c2Radius = classOne.getRadius();
         double midPointX = c1X+c2X/2;
         double midPointY = midPointX * - 0.4;
 
@@ -264,12 +279,12 @@ public class Visualizer {
         path.getElements().add(moveTo);
         path.getElements().add(quadTo);
         path.setStrokeWidth(5);
-        path.setStroke(EXTENDS_COLOR);
+        path.setStroke(colour);
 
         // Create the Hexagon for every  class
-        Polygon hexagon = createHexagon(superClass);
+        Polygon hexagon = createHexagon(classOne);
 
-        registerHandlerExtends(superClass, hexagon, path);
+        registerHandlerExtends(classOne, hexagon, path);
 
         canvas.getChildren().addAll(hexagon, path);
 

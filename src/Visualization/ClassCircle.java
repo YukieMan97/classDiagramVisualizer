@@ -1,4 +1,4 @@
-package Main;
+package Visualization;
 
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;

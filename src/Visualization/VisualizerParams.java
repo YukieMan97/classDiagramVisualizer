@@ -11,6 +11,12 @@ public class VisualizerParams {
     public static final double MAX_RANDOM = 1000;
     public static final Color STROKE_COLOR = Color.GRAY;
     public static final Color EXTENDS_COLOR = Color.STEELBLUE;
+    public static final Color IMPLEMENTS_COLOR = Color.DIMGRAY;
+    public static final Color TAKES_AS_ARGUMENT_COLOR = Color.MEDIUMVIOLETRED;
+    public static final Color USED_AS_LOCAL_VARIABLE_COLOR = Color.GOLDENROD;
+    public static final Color RETURNED_BY_METHOD_COLOR = Color.SILVER;
+    public static final Color USED_AS_PUBLIC_FIELD_COLOR = Color.VIOLET;
+    public static final Color USED_AS_PRIVATE_FIELD_COLOR = Color.TURQUOISE;
 
     public static final Color circle1HoverColor = Color.HONEYDEW;
     public static final Color publicColor = Color.SEAGREEN;
