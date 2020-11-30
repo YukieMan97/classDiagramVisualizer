@@ -1,4 +1,4 @@
-package pannableFeatures;
+package PannableFeatures;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;

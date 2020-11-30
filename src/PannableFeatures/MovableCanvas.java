@@ -1,4 +1,4 @@
-package pannableFeatures;
+package PannableFeatures;
 
 import Main.Main;
 import javafx.beans.property.DoubleProperty;
