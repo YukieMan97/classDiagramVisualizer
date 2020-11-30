@@ -48,6 +48,7 @@ public class ASTProcessor {
     }
 
 
+
     public void process(ArrayList<String> paths) {
         try {
             ArrayList<CompilationUnit> cus = createCompilationUnits(paths);
@@ -102,9 +103,14 @@ public class ASTProcessor {
             String name = md.getNameAsString();
             Optional<Node> parentNode = md.getParentNode();
             Node parent = parentNode.get();
-            String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
-            ClassRepresentation parentClassRep = classRepresentations.get(parentName);
-            methodRepresentations.put(parentClassRep.getName() + ": " + name, new MethodRepresentation(name));
+            try {
+                String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
+                ClassRepresentation parentClassRep = classRepresentations.get(parentName);
+                methodRepresentations.put(parentClassRep.getName() + ": " + name, new MethodRepresentation(name));
+            } catch (Exception e) {
+                return;
+            }
+
         }
     }
 
@@ -177,10 +183,14 @@ public class ASTProcessor {
 
             Optional<Node> parentNode = md.getParentNode();
             Node parent = parentNode.get();
-            String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
-            parentClassRep = classRepresentations.get(parentName);
-            curMethodRep = methodRepresentations.get(parentName + ": " + name);
-            parentClassRep.addToMethods(curMethodRep);
+            try {
+                String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
+                parentClassRep = classRepresentations.get(parentName);
+                curMethodRep = methodRepresentations.get(parentName + ": " + name);
+                parentClassRep.addToMethods(curMethodRep);
+            } catch (Exception e) {
+                return;
+            }
 
 
 
@@ -196,6 +206,7 @@ public class ASTProcessor {
             String type = md.getType().toString();
             if (classRepresentations.containsKey(type)) {
                 parentClassRep.addToClassesReturnedByMethods(type, name);
+                curMethodRep.addToUsedClasses(type);
             }
             NodeList<Parameter> parameters = md.getParameters();
             for (Parameter p : parameters) {
@@ -212,6 +223,7 @@ public class ASTProcessor {
             ufv.visit(md, curMethodRep);
             MethodCallVisitor mcv = new MethodCallVisitor();
             mcv.visit(md, curMethodRep);
+            parentClassRep.setSize();
 
         }
 
@@ -247,6 +259,7 @@ public class ASTProcessor {
                     if (classRepresentations.containsKey(name)) {
                         parentClassRep.addToClassesUsedAsLocalVariables(name, curMethodName);
                         curMethodRep.addToLocalVarNames(varName, name);
+                        curMethodRep.addToUsedClasses(name);
                     }
 
                 }
@@ -259,8 +272,10 @@ public class ASTProcessor {
             public void visit(FieldAccessExpr fae, MethodRepresentation mr) {
                 super.visit(fae, mr);
                 String calleeName = fae.getScope().toString();
-                if (calleeName.equalsIgnoreCase("this")) {
-                    curMethodRep.addToUsedFields(fae.getNameAsString());
+                if (fae.getScope() != null) {
+                    if (calleeName.equalsIgnoreCase("this")) {
+                        curMethodRep.addToUsedFields(fae.getNameAsString());
+                    }
                 }
             }
 
@@ -292,31 +307,6 @@ public class ASTProcessor {
                     curMethodRep.addToMethodsThisCalls(methodName, parentClassRep.getName());
                 }
 
-
-                   /* if (curMethodRep.getLocalVars().containsKey(scopeName)) {
-                        curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getLocalVars().get(scopeName));
-                        if (methodRepresentations.containsKey(curMethodRep.getLocalVars().get(scopeName) + ": " + methodName)) {
-                            methodRepresentations.get(curMethodRep.getLocalVars().get(scopeName) + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                        }
-                    } else if (curMethodRep.getArgumentNames().containsKey(scopeName)) {
-                        curMethodRep.addToMethodsThisCalls(methodName, curMethodRep.getArgumentNames().get(scopeName));
-                        if (methodRepresentations.containsKey(curMethodRep.getArgumentNames().get(scopeName) + ": " + methodName)) {
-                            methodRepresentations.get(curMethodRep.getArgumentNames().get(scopeName) + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                        }
-                    } else if (parentClassRep.getClassesUsedAsPrivateFields().containsValue(scopeName)) {
-                        String fName = parentClassRep.getKeyForPrivateFieldName(scopeName);
-                        curMethodRep.addToMethodsThisCalls(methodName, fName);
-                        if (methodRepresentations.containsKey(fName + ": " + methodName)) {
-                            methodRepresentations.get(fName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                        }
-
-                    } else if (parentClassRep.getClassesUsedAsPublicFields().containsValue(scopeName)) {
-                        String fName = parentClassRep.getKeyForPublicFieldName(scopeName);
-                        curMethodRep.addToMethodsThisCalls(methodName, fName);
-                        if (methodRepresentations.containsKey(fName + ": " + methodName)) {
-                            methodRepresentations.get(fName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
-                        }*/
-
             }
 
 
@@ -339,6 +329,7 @@ public class ASTProcessor {
                     curMethodRep.addToMethodsThisCalls(methodName, typeName);
                     if (methodRepresentations.get(typeName + ": " + methodName) != null) {
                         methodRepresentations.get(typeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                        curMethodRep.addToUsedClasses(typeName);
                     }
                 } else {
                     ClassRepresentation lastType = classRepresentations.get(typeName);
@@ -354,6 +345,7 @@ public class ASTProcessor {
                     curMethodRep.addToMethodsThisCalls(methodName, typeName);
                     if (methodRepresentations.containsKey(typeName + ": " + methodName)) {
                         methodRepresentations.get(typeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                        curMethodRep.addToUsedClasses(typeName);
                     }
                 }
 
