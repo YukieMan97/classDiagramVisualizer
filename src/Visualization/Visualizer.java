@@ -114,74 +114,66 @@ public class Visualizer {
                 connectClasses(canvas, classObj.getClassCircle(), classCircleDictionary.get(s).getClassCircle(), USED_AS_PRIVATE_FIELD_COLOR);
             }
 
-            // TODO step 4: shapes and texts for methods and method names (Avi implementing rn)
+            // step 4: shapes and texts for methods and method names
             for (MethodRepresentation method : currentClass.getMethods()) {
                 addMethod(classObj.getClassCircle(), method.getName(), true, currentClass.getMethods().size());
             }
 
         }
-        // creates connection between superClass (class1) and subClass (class2)
-//        for (int k = 0; k < 5; k++) {
-//            int parentSize = parentClasses.size();
-//            int randomClass1 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
-//            int randomClass2 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
-//            if (randomClass1 == (randomClass2)) {
-//                while (randomClass1 == randomClass2) {
-//                    randomClass1 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
-//                    randomClass2 = (int) round(ThreadLocalRandom.current().nextDouble(0, parentSize-1));
-//                    Circle class1 = parentClasses.get(randomClass1).getClassCircle();
-//                    Circle class2 = parentClasses.get(randomClass2).getClassCircle();
-//                    connectClasses(canvas, class1, class2);
-//                }
-//            }
-//            else {
-//                Circle class1 = parentClasses.get(randomClass1).getClassCircle();
-//                Circle class2 = parentClasses.get(randomClass2).getClassCircle();
-//                connectClasses(canvas, class1, class2);
-//            }
-//        }
     }
 
     private void addMethod(Circle classCircle, String methodName, boolean isPublic, int numMethods) {
-        Shape methodShape = isPublic ? new Circle() : new Rectangle();
+//        Shape methodShape = isPublic ? new Circle() : new Rectangle();
         double radius = classCircle.getRadius();
         double randomAngle = ThreadLocalRandom.current().nextDouble(0.0D, 360.0D);
-        double xPos = classCircle.getCenterX() + Math.sin(randomAngle) * radius * 1.5D;
-        double yPos = classCircle.getCenterY() + Math.cos(randomAngle) * radius * 1.5D;
-        methodShape.setLayoutX(xPos);
-        methodShape.setLayoutY(yPos);
-        if (isPublic) {
-            ((Circle)methodShape).setRadius(20.0D);
-        } else {
-            ((Rectangle)methodShape).setHeight(35.0D);
-            ((Rectangle)methodShape).setWidth(35.0D);
-        }
+        double classCircleX = classCircle.getCenterX();
+        double classCircleY = classCircle.getCenterY();
+        double radiusRatio = radius * 0.30;
+        double xPos = classCircleX + Math.sin(randomAngle) * radius * 1.5D;
+        double yPos = classCircleY + Math.cos(randomAngle) * radius * 1.5D;
 
-        methodShape.setFill(Color.GREY);
-        methodShape.setStrokeWidth(2.5D);
-        methodShape.setStroke(Color.ORANGE);
         int n = numMethods;
         System.out.println(numMethods);
 
         for(int i = 0; i < n; ++i) {
-            double methodLineX = classCircle.getCenterX() + radius * Math.cos(6.283185307179586D * (double)i / (double)n);
-            double methodLineY = classCircle.getCenterY() + radius * Math.sin(6.283185307179586D * (double)i / (double)n);
+            Shape methodShape = isPublic ? new Circle() : new Rectangle();
+            double methodShapeX = classCircleX  + (radius*1.5) * Math.cos(6.283185307179586D * (double)i / (double)n);
+            double methodShapeY = classCircleY  + (radius*1.5) * Math.sin(6.283185307179586D * (double)i / (double)n);
+            double methodLineX = classCircleX + radius * Math.cos(6.283185307179586D * (double)i / (double)n);
+            double methodLineY = classCircleY + radius * Math.sin(6.283185307179586D * (double)i / (double)n);
             Circle pt = new Circle(methodLineX, methodLineY, 3.0D);
             pt.setFill(Color.BLACK);
             canvas.getChildren().add(pt);
-            Line methodLine = new Line(methodLineX, methodLineY, xPos, yPos);
-            if (!isPublic) {
-                methodLine.setEndX(xPos + 17.5D);
-                methodLine.setEndY(yPos + 17.5D);
+
+            methodShape.setLayoutX(methodShapeX);
+            methodShape.setLayoutY(methodShapeY);
+            if (isPublic) {
+                ((Circle)methodShape).setRadius(20.0D);
+            } else {
+                ((Rectangle)methodShape).setHeight(35.0D);
+                ((Rectangle)methodShape).setWidth(35.0D);
             }
 
+            methodShape.setFill(Color.GREY);
+            methodShape.setStrokeWidth(2.5D);
+            methodShape.setStroke(Color.ORANGE);
+
+            Line methodLine = new Line(methodLineX, methodLineY, methodShapeX, methodShapeY);
+            if (!isPublic) {
+                methodLine.setEndX(methodShapeX + 17.5D);
+                methodLine.setEndY(methodShapeY + 17.5D);
+            }
             methodLine.setStrokeWidth(2.5D);
             canvas.getChildren().add(methodLine);
+            canvas.getChildren().add(methodShape);
+
+            TextObject textObj = new TextObject(xPos, yPos, methodName);
+            this.registerHandler(canvas, (Shape)methodShape, Color.GREY, Color.GREY, textObj.getText());
         }
 
-        TextObject textObj = new TextObject(xPos, yPos, methodName);
-        canvas.getChildren().add(methodShape);
-        this.registerHandler(canvas, (Shape)methodShape, Color.GREY, Color.GREY, textObj.getText());
+//        TextObject textObj = new TextObject(xPos, yPos, methodName);
+//        canvas.getChildren().add(methodShape);
+
     }
 
     // create hexagon symbol as a representation of a superClass
