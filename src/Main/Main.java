@@ -48,7 +48,7 @@ public class Main extends Application {
         FN.getPaths(args[0], paths);
         astp = new ASTProcessor();
         astp.process(paths);
-
+        System.out.println("AST processing complete");
         launch(args);
     }
 
