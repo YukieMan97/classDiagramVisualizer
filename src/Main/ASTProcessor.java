@@ -103,9 +103,14 @@ public class ASTProcessor {
             String name = md.getNameAsString();
             Optional<Node> parentNode = md.getParentNode();
             Node parent = parentNode.get();
-            String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
-            ClassRepresentation parentClassRep = classRepresentations.get(parentName);
-            methodRepresentations.put(parentClassRep.getName() + ": " + name, new MethodRepresentation(name));
+            try {
+                String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
+                ClassRepresentation parentClassRep = classRepresentations.get(parentName);
+                methodRepresentations.put(parentClassRep.getName() + ": " + name, new MethodRepresentation(name));
+            } catch (Exception e) {
+                return;
+            }
+
         }
     }
 
@@ -178,10 +183,14 @@ public class ASTProcessor {
 
             Optional<Node> parentNode = md.getParentNode();
             Node parent = parentNode.get();
-            String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
-            parentClassRep = classRepresentations.get(parentName);
-            curMethodRep = methodRepresentations.get(parentName + ": " + name);
-            parentClassRep.addToMethods(curMethodRep);
+            try {
+                String parentName = ((ClassOrInterfaceDeclaration) parent).getNameAsString();
+                parentClassRep = classRepresentations.get(parentName);
+                curMethodRep = methodRepresentations.get(parentName + ": " + name);
+                parentClassRep.addToMethods(curMethodRep);
+            } catch (Exception e) {
+                return;
+            }
 
 
 

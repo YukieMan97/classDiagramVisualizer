@@ -19,6 +19,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -48,7 +49,9 @@ public class Main extends Application {
         FN.getPaths(args[0], paths);
         astp = new ASTProcessor();
         astp.process(paths);
-        System.out.println("AST processing complete");
+        Hashtable<String, ClassRepresentation> classes = astp.getClassRepresentations();
+        Hashtable<String, MethodRepresentation> methods = astp.getMethodRepresentations();
+       // System.out.println("AST processing complete");
         launch(args);
     }
 
