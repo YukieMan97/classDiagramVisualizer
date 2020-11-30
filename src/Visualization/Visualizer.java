@@ -151,10 +151,10 @@ public class Visualizer {
                 ((Rectangle)methodShape).setHeight(35.0D);
                 ((Rectangle)methodShape).setWidth(35.0D);
             }
-
-            methodShape.setFill(Color.GREY);
+            Color methodColour = (Color) classCircle.getFill();
+            methodShape.setFill(methodColour);
             methodShape.setStrokeWidth(2.5D);
-            methodShape.setStroke(Color.ORANGE);
+            methodShape.setStroke(STROKE_COLOR);
 
             Line methodLine = new Line(methodLineX, methodLineY, methodShapeX, methodShapeY);
             if (!isPublic) {
@@ -166,7 +166,7 @@ public class Visualizer {
             canvas.getChildren().add(methodShape);
 
             TextObject textObj = new TextObject(xPos, yPos, methodName);
-            this.registerHandler(canvas, (Shape)methodShape, Color.GREY, Color.GREY, textObj.getText());
+            this.registerHandler(canvas, (Shape)methodShape, methodColour, circle1HoverColor, textObj.getText());
         }
 
 //        TextObject textObj = new TextObject(xPos, yPos, methodName);

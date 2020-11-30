@@ -10,8 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static Visualization.Visualizer.canvas;
 import static Visualization.Visualizer.parentClasses;
-import static Visualization.VisualizerParams.P_CIRCLE_RADIUS;
-import static Visualization.VisualizerParams.STROKE_COLOR;
+import static Visualization.VisualizerParams.*;
 
 public class ClassObject {
 
@@ -19,9 +18,6 @@ public class ClassObject {
     private TextObject className;
     public double xPos;
     public double yPos;
-
-    private static final double MIN_RANDOM = -1000;
-    private static final double MAX_RANDOM = 1000;
 
     public ClassObject(String name) {
         // step 1: create circle for class
@@ -40,7 +36,8 @@ public class ClassObject {
     }
 
     private Circle createClassShape(double x, double y) {
-        Circle circle = createCircle(x, y, P_CIRCLE_RADIUS, Color.PEACHPUFF);
+        Color randomColour = Color.color(Math.random(), Math.random(), Math.random());
+        Circle circle = createCircle(x, y, P_CIRCLE_RADIUS, randomColour);
         checkCollision(circle);
         return circle;
     }
