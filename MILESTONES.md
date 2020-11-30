@@ -100,9 +100,35 @@ Status of implementation:
 Plans for final user study:
 - contact previous users and new users to test our program
 - receive feedback and make changes to our implementation if required
+- please see the Project Submission Notes about our final user study
 
 Planned timeline for the remaining days:
 - Before Nov 25th: Complete implementation before Nov 25th with some tests
 - Nov 25th: Complete final user study
 - Nov 25th-26th: Make changes according to final user study feedback
 - Nov 26th-30th: Test our implementation more and make the according fixes
+
+## Project Submission Notes:
+Since there was limited time on the video, here are some more important notes about our project:
+- Our backend was implemented completely, meaning that we were able to grab what we wanted from any project file and parse them. We mainly wanted the classes, methods, and fields of each class within the given project file.
+
+- Majority of our visualization implementation was completed. 
+![visual](https://i.gyazo.com/53c0b88db0b115ef453d4255d00af58c.png)
+
+- We wanted to show the relationship between different classes, methods, and fields, and we achieved that by displaying different coloured lines. 
+
+- Note that the class with the white diamond, which becomes yellow and larger in size, is the class that holds the relationship. In other words, for the extends relationship, the class with the diamond is that class that is extending the other class. You can directly see this relationship if you hover over the diamond or the path of that diamond. 
+
+- We also wanted to show every class' private and public fields/methods. We represented the public aspect with circles, and the private aspect with squares. These fields are placed within the class circles. As for the methods, these are extended outside of the class Circle. This is what we intended:
+![visual](https://i.gyazo.com/5e44a84691a3f07949d2d750a7977224.png)
+
+- Here is an example of an extends relationship:
+![example1](https://i.gyazo.com/cbe6c48fcf76b725bf0dd62ac8dd1ccd.png)
+![example2](https://i.gyazo.com/b7f1e095fc451afa8b21f964636b58f6.png)
+- in the example above, notice that Alias (the pink circle) has 5 method circles around it because in the actual java class file, it has 5 public methods. Unfortunately, the private fields are not showing up. 
+
+- At one point, we were able to display all the methods with their names, but we found that to be too distracting. When we fixed this aspect, a bug that we caught too late caused the method names to be the same (current implementation). For our previous implementation, please see the image below to see that the method names were correctly implemented but the visualization implementation was not. This image is showing that our backend was working correctly. 
+![visual1](https://cdn.discordapp.com/attachments/755857007659188248/782956213133901874/unknown.png)
+
+![userStudy](https://i.gyazo.com/5362670b22c3c02c8b16f774ddd53976.png)
+- For our final user studies, we were testing a small project after hooking the backend and frontend. They mentioned that we should use different colours to represent different relationships, which we did implement. They also mentioned that the raidus should be larger for classes with more methods/fields, and we also implemented this. Other feedback that we were unable to fix was the path lines going over every class circle, making it difficult to see things clearly and it also blocked the class name. We also could have improved readability by increasing the text size when zoomed out or in. We were trying to implement a window that displayed information, but we focused on other visualization implementation.
