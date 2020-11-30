@@ -101,28 +101,26 @@ public class Main extends Application {
             canvas.getChildren().addAll(circle, className);
 
             // step 3: shapes and texts for fields and field names
-            int numFields = (int) round(ThreadLocalRandom.current().nextDouble(1, 4));
-            for (int j = 0; j < numFields; j++) {
-                int chooseMethod = (int) round(ThreadLocalRandom.current().nextDouble(0, 1));
-                int fieldNum = j + 1;
-                if (chooseMethod == 1) {
-                    // create public field node
-                    Circle publicCircle = createPublicCircle(parentX, parentY, C_CIRCLE_RADIUS, publicColor, circle, className);
-                    Text fieldName = createText(parentX, parentY, "field " + fieldNum);
-                    canvas.getChildren().addAll(publicCircle);
+            ClassRepresentation currentClass = astp.getClassRepresentations().get(key);
+            for (String field : currentClass.getClassesUsedAsPublicFields().keySet()) {
+                String publicFieldName = currentClass.getClassesUsedAsPublicFields().get(field).get(0);
+                // create public field node
+                Circle publicCircle = createPublicCircle(parentX, parentY, C_CIRCLE_RADIUS, publicColor, circle, className);
+                Text fieldName = createText(parentX, parentY, publicFieldName);
+                canvas.getChildren().addAll(publicCircle);
 
-                    // handles hovering over children nodes
-                    registerHandler(canvas, publicCircle, publicColor, circle1HoverColor, fieldName);
-                }
-                else {
-                    // create private field node
-                    Rectangle privateField = createPrivateSquare(parentX, parentY, C_SQUARE_SIZE, privateColor, circle, className);
-                    Text fieldName = createText(parentX, parentY, "field " + fieldNum);
-                    canvas.getChildren().addAll(privateField);
+                // handles hovering over children nodes
+                registerHandler(canvas, publicCircle, publicColor, circle1HoverColor, fieldName);
+            }
+            for (String field : currentClass.getClassesUsedAsPrivateFields().keySet()) {
+                String privateFieldName = currentClass.getClassesUsedAsPrivateFields().get(field).get(0);
+                // create private field node
+                Rectangle privateField = createPrivateSquare(parentX, parentY, C_SQUARE_SIZE, privateColor, circle, className);
+                Text fieldName = createText(parentX, parentY, privateFieldName);
+                canvas.getChildren().addAll(privateField);
 
-                    // handles hovering over children nodes
-                    registerHandler(canvas, privateField, privateColor, circle1HoverColor, fieldName);
-                }
+                // handles hovering over children nodes
+                registerHandler(canvas, privateField, privateColor, circle1HoverColor, fieldName);
             }
 
             // TODO step 4: shapes and texts for methods and method names (Avi implementing rn)
