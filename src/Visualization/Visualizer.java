@@ -123,12 +123,10 @@ public class Visualizer {
     }
 
     private void addMethod(Circle classCircle, String methodName, boolean isPublic, int numMethods) {
-//        Shape methodShape = isPublic ? new Circle() : new Rectangle();
         double radius = classCircle.getRadius();
         double randomAngle = ThreadLocalRandom.current().nextDouble(0.0D, 360.0D);
         double classCircleX = classCircle.getCenterX();
         double classCircleY = classCircle.getCenterY();
-        double radiusRatio = radius * 0.30;
         double xPos = classCircleX + Math.sin(randomAngle) * radius * 1.5D;
         double yPos = classCircleY + Math.cos(randomAngle) * radius * 1.5D;
 
@@ -246,7 +244,7 @@ public class Visualizer {
         // Create the Hexagon for every  class
         Polygon hexagon = createHexagon(classOne);
 
-        registerHandlerExtends(classOne, hexagon, path);
+        registerHandlerExtends(classOne, hexagon, path, colour);
 
         canvas.getChildren().addAll(hexagon, path);
 
@@ -369,7 +367,7 @@ public class Visualizer {
     }
 
     // When mouse is hovered over path, hexagon expands to show the path from superClass to subClass
-    private void registerHandlerExtends(Circle superClass, Polygon hexagon, Path path) {
+    private void registerHandlerExtends(Circle superClass, Polygon hexagon, Path path, Color colour) {
         double changeSize = 1;
         Color hoverColor = Color.GOLD;
 
@@ -384,11 +382,11 @@ public class Visualizer {
         });
 
         hexagon.setOnMouseExited(mouseEvent -> {
-            extendsExit(hexagon, path, changeSize);
+            extendsExit(hexagon, path, changeSize, colour);
         });
 
         path.setOnMouseExited( mouseEvent -> {
-            extendsExit(hexagon, path, changeSize);
+            extendsExit(hexagon, path, changeSize, colour);
 
         });
 
@@ -407,8 +405,8 @@ public class Visualizer {
     }
 
     // changes path's and hexagon's color and  decreases their size
-    private void extendsExit(Polygon hexagon, Path path, double changeSize) {
-        path.setStroke(EXTENDS_COLOR);
+    private void extendsExit(Polygon hexagon, Path path, double changeSize, Color colour) {
+        path.setStroke(colour);
         path.setStrokeWidth(path.getStrokeWidth() - changeSize);
 
         hexagon.setScaleX(1);
