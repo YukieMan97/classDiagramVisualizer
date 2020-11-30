@@ -9,15 +9,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
 public class MovableCanvas extends AnchorPane {
-    DoubleProperty scale = new SimpleDoubleProperty(1.0);
+    DoubleProperty movableScale = new SimpleDoubleProperty(1.0);
 
     public MovableCanvas() {
         setPrefSize(Main.WIDTH, Main.HEIGHT);
         setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
 
         // apply scale transform
-        scaleXProperty().bind(scale);
-        scaleYProperty().bind(scale);
+        scaleXProperty().bind(movableScale);
+        scaleYProperty().bind(movableScale);
     }
 
     public void createGrid() {
@@ -47,12 +47,12 @@ public class MovableCanvas extends AnchorPane {
         grid.toBack();
     }
 
-    public double getScale() {
-        return scale.get();
+    public double getMovableScale() {
+        return movableScale.get();
     }
 
-    public void setScale(double newScale) {
-        scale.set(newScale);
+    public void setMovableScale(double newScale) {
+        movableScale.set(newScale);
     }
 
     public void setPivot(double x, double y) {

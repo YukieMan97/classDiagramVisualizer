@@ -133,8 +133,6 @@ public class Visualizer {
         double yPos = classCircleY + Math.cos(randomAngle) * radius * 1.5D;
 
         int n = numMethods;
-        System.out.println(numMethods);
-
         for(int i = 0; i < n; ++i) {
             Shape methodShape = isPublic ? new Circle() : new Rectangle();
             double methodShapeX = classCircleX  + (radius*1.5) * Math.cos(6.283185307179586D * (double)i / (double)n);
@@ -166,8 +164,7 @@ public class Visualizer {
             methodLine.setStrokeWidth(2.5D);
             canvas.getChildren().add(methodLine);
             canvas.getChildren().add(methodShape);
-
-            TextObject textObj = new TextObject(xPos, yPos, methodName);
+            TextObject textObj = new TextObject(methodShapeX, methodShapeY, methodName);
             this.registerHandler(canvas, (Shape)methodShape, methodColour, circle1HoverColor, textObj.getText());
         }
 
@@ -216,15 +213,15 @@ public class Visualizer {
         return scale;
     }
 
-    private void connectClasses(AnchorPane canvas, Circle classOne, Circle class2, Color colour) {
+    private void connectClasses(AnchorPane canvas, Circle class1, Circle class2, Color colour) {
         Path path = new Path();
 
-        double c1X = classOne.getCenterX();
-        double c1Y = classOne.getCenterY();
-        double c1Radius = classOne.getRadius();
+        double c1X = class1.getCenterX();
+        double c1Y = class1.getCenterY();
+        double c1Radius = class1.getRadius();
         double c2X = class2.getCenterX();
         double c2Y = class2.getCenterY();
-        double c2Radius = classOne.getRadius();
+        double c2Radius = class1.getRadius();
         double midPointX = c1X+c2X/2;
         double midPointY = midPointX * - 0.4;
 
@@ -240,13 +237,13 @@ public class Visualizer {
 
         path.getElements().add(moveTo);
         path.getElements().add(quadTo);
-        path.setStrokeWidth(5);
+        path.setStrokeWidth(10);
         path.setStroke(colour);
 
         // Create the Hexagon for every  class
-        Polygon hexagon = createHexagon(classOne);
+        Polygon hexagon = createHexagon(class1);
 
-        registerHandlerExtends(classOne, hexagon, path, colour);
+        registerHandlerExtends(class1, class2, hexagon, path, colour);
 
         canvas.getChildren().addAll(hexagon, path);
 
@@ -369,26 +366,31 @@ public class Visualizer {
     }
 
     // When mouse is hovered over path, hexagon expands to show the path from superClass to subClass
-    private void registerHandlerExtends(Circle superClass, Polygon hexagon, Path path, Color colour) {
+    private void registerHandlerExtends(Circle circle1, Circle class2, Polygon hexagon, Path path, Color colour) {
         double changeSize = 1;
         Color hoverColor = Color.GOLD;
+        Text legendTextObject = new Text(40, 40, "");
+        legendTextObject.setFont(new Font("Arial Black", 80));
+        legendTextObject.setFill(Color.SALMON);
+        legendTextObject.setStroke(Color.BLACK);
+        legendTextObject.setStrokeWidth(1);
+
 
         hexagon.setOnMouseEntered( mouseEvent -> {
-            extendsEnter(superClass, hexagon, path, changeSize, hoverColor);
+            extendsEnter(mouseEvent, circle1, hexagon, path, changeSize, hoverColor, colour, legendTextObject);
 
         });
 
         path.setOnMouseEntered( mouseEvent -> {
-            extendsEnter(superClass, hexagon, path, changeSize, hoverColor);
-
+            extendsEnter(mouseEvent, circle1, hexagon, path, changeSize, hoverColor, colour, legendTextObject);
         });
 
         hexagon.setOnMouseExited(mouseEvent -> {
-            extendsExit(hexagon, path, changeSize, colour);
+            extendsExit(hexagon, path, changeSize, colour, legendTextObject);
         });
 
         path.setOnMouseExited( mouseEvent -> {
-            extendsExit(hexagon, path, changeSize, colour);
+            extendsExit(hexagon, path, changeSize, colour, legendTextObject);
 
         });
 
@@ -396,7 +398,8 @@ public class Visualizer {
     }
 
     // changes path's and hexagon's color and  increases their size
-    private void extendsEnter(Circle superClass, Polygon hexagon, Path path, double changeSize, Color hoverColor) {
+    private void extendsEnter(MouseEvent mouseEvent, Circle superClass, Polygon hexagon, Path path, double changeSize, Color hoverColor, Color colour, Text legendTextObject) {
+
         path.setStroke(hoverColor);
         path.setStrokeWidth(path.getStrokeWidth() + changeSize);
 
@@ -404,10 +407,41 @@ public class Visualizer {
         hexagon.setScaleY(2);
         hexagon.setStrokeWidth(hexagon.getStrokeWidth() + changeSize);
         hexagon.setFill(hoverColor);
+
+        double mouseX = mouseEvent.getX();
+        double mouseY = mouseEvent.getY();
+        double added = 1.3;
+        double legendX = mouseX + (mouseX * added);
+        double legendY = mouseY + (mouseY * added);
+        legendTextObject.setX(legendX);
+        legendTextObject.setY(legendY);
+
+        if (colour == TAKES_AS_ARGUMENT_COLOR) {
+            legendTextObject.setText("takes as argument relationship");
+            canvas.getChildren().add(legendTextObject);
+        } else if (colour == EXTENDS_COLOR) {
+            legendTextObject.setText("Extend Relationship");
+            canvas.getChildren().add(legendTextObject);
+        } else if (colour == IMPLEMENTS_COLOR) {
+            legendTextObject.setText("Implements Relationship");
+            canvas.getChildren().add(legendTextObject);
+        } else if (colour == USED_AS_LOCAL_VARIABLE_COLOR) {
+            legendTextObject.setText("Field is used as Local Variable");
+            canvas.getChildren().add(legendTextObject);
+        } else if (colour == RETURNED_BY_METHOD_COLOR) {
+            legendTextObject.setText("Returned by Method Relationship");
+            canvas.getChildren().add(legendTextObject);
+        } else if (colour == USED_AS_PUBLIC_FIELD_COLOR) {
+            legendTextObject.setText("Used as Public Field Relationship");
+            canvas.getChildren().add(legendTextObject);
+        } else if (colour == USED_AS_PRIVATE_FIELD_COLOR) {
+            legendTextObject.setText("Used as Private Field Relationship");
+            canvas.getChildren().add(legendTextObject);
+        }
     }
 
     // changes path's and hexagon's color and  decreases their size
-    private void extendsExit(Polygon hexagon, Path path, double changeSize, Color colour) {
+    private void extendsExit(Polygon hexagon, Path path, double changeSize, Color colour, Text legendTextObject) {
         path.setStroke(colour);
         path.setStrokeWidth(path.getStrokeWidth() - changeSize);
 
@@ -415,5 +449,7 @@ public class Visualizer {
         hexagon.setScaleY(1);
         hexagon.setStrokeWidth(hexagon.getStrokeWidth() - changeSize);
         hexagon.setFill(Color.WHITE);
+
+        canvas.getChildren().remove(legendTextObject);
     }
 }

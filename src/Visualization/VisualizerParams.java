@@ -7,8 +7,8 @@ public class VisualizerParams {
     public static final double P_CIRCLE_RADIUS = 80;                // parent circle
     public static final double C_CIRCLE_RADIUS = 20;                 // child circle
     public static final double C_SQUARE_SIZE = C_CIRCLE_RADIUS + 15; // child square
-    public static final double MIN_RANDOM = -1700;
-    public static final double MAX_RANDOM = 1700;
+    public static final double MIN_RANDOM = -2000;
+    public static final double MAX_RANDOM = 2000;
     public static final Color STROKE_COLOR = Color.GRAY;
     public static final Color EXTENDS_COLOR = Color.STEELBLUE;
     public static final Color IMPLEMENTS_COLOR = Color.DIMGRAY;

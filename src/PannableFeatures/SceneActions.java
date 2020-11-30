@@ -69,7 +69,7 @@ public class SceneActions {
         public void handle(ScrollEvent scrollEvent) {
             double delta = 1.05;
 
-            double scale = canvas.getScale();
+            double scale = canvas.getMovableScale();
             double oldScale = scale;
 
             if (scrollEvent.getDeltaY() < 0) {
@@ -87,7 +87,7 @@ public class SceneActions {
             double dy = (scrollEvent.getSceneY() - (canvas.getBoundsInParent().getHeight()/2 +
                     canvas.getBoundsInParent().getMinY()));
 
-            canvas.setScale(scale);
+            canvas.setMovableScale(scale);
 
             // pivot value must be untransformed (aka without scaling)
             double untransformedX = f*dx;

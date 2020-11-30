@@ -49,7 +49,7 @@ public class NodeActions {
             if (!mouseEvent.isSecondaryButtonDown())
                 return;
 
-            double scale = canvas.getScale();
+            double scale = canvas.getMovableScale();
 
             Node node = (Node) mouseEvent.getSource();
 
