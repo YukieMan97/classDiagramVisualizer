@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="javaparser-core-3.17.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/library/javaparser-core-3.17.0.jar!/" />
+      <root url="jar:///Library/Java/JavaVirtualMachines/javaparser-core-3.17.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

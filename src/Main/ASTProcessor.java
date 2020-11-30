@@ -196,6 +196,7 @@ public class ASTProcessor {
             String type = md.getType().toString();
             if (classRepresentations.containsKey(type)) {
                 parentClassRep.addToClassesReturnedByMethods(type, name);
+                curMethodRep.addToUsedClasses(type);
             }
             NodeList<Parameter> parameters = md.getParameters();
             for (Parameter p : parameters) {
@@ -247,6 +248,7 @@ public class ASTProcessor {
                     if (classRepresentations.containsKey(name)) {
                         parentClassRep.addToClassesUsedAsLocalVariables(name, curMethodName);
                         curMethodRep.addToLocalVarNames(varName, name);
+                        curMethodRep.addToUsedClasses(name);
                     }
 
                 }
@@ -259,8 +261,10 @@ public class ASTProcessor {
             public void visit(FieldAccessExpr fae, MethodRepresentation mr) {
                 super.visit(fae, mr);
                 String calleeName = fae.getScope().toString();
-                if (calleeName.equalsIgnoreCase("this")) {
-                    curMethodRep.addToUsedFields(fae.getNameAsString());
+                if (fae.getScope() != null) {
+                    if (calleeName.equalsIgnoreCase("this")) {
+                        curMethodRep.addToUsedFields(fae.getNameAsString());
+                    }
                 }
             }
 
@@ -339,6 +343,7 @@ public class ASTProcessor {
                     curMethodRep.addToMethodsThisCalls(methodName, typeName);
                     if (methodRepresentations.get(typeName + ": " + methodName) != null) {
                         methodRepresentations.get(typeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                        curMethodRep.addToUsedClasses(typeName);
                     }
                 } else {
                     ClassRepresentation lastType = classRepresentations.get(typeName);
@@ -354,6 +359,7 @@ public class ASTProcessor {
                     curMethodRep.addToMethodsThisCalls(methodName, typeName);
                     if (methodRepresentations.containsKey(typeName + ": " + methodName)) {
                         methodRepresentations.get(typeName + ": " + methodName).addToMethodsThatCallThis(methodName, parentClassRep.getName());
+                        curMethodRep.addToUsedClasses(typeName);
                     }
                 }
 
