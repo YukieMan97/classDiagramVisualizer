@@ -12,7 +12,6 @@ public class TextObject {
 
     public TextObject(double parentX, double parentY, String key) {
         text = createText(parentX, parentY, key);
-        canvas.getChildren().add(text);
     }
 
     private Text createText(double x, double y, String s) {

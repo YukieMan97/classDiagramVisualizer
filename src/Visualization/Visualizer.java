@@ -10,11 +10,15 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -87,7 +91,7 @@ public class Visualizer {
 
             // TODO step 4: shapes and texts for methods and method names (Avi implementing rn)
             for (MethodRepresentation method : currentClass.getMethods()) {
-                AddMethod(classObj.getClassCircle(), method.getName(), true);
+                addMethod(classObj.getClassCircle(), method.getName(), true, currentClass.getMethods().size());
             }
 
         }
@@ -113,7 +117,7 @@ public class Visualizer {
         }
     }
 
-    private void AddMethod(Circle classCircle, String methodName, boolean isPublic) {
+    private void addMethod(Circle classCircle, String methodName, boolean isPublic, int numMethods) {
         Shape methodShape = isPublic ? new Circle() : new Rectangle();
         double radius = classCircle.getRadius();
         double randomAngle = ThreadLocalRandom.current().nextDouble(0, 360);
@@ -132,17 +136,31 @@ public class Visualizer {
         methodShape.setStrokeWidth(2.5);
         methodShape.setStroke(Color.ORANGE);
 
-        Line methodLine = new Line(classCircle.getCenterX(), classCircle.getCenterY(), xPos, yPos);
-        if (!isPublic) {
-            methodLine.setEndX(xPos + C_SQUARE_SIZE / 2);
-            methodLine.setEndY(yPos + C_SQUARE_SIZE / 2);
+
+        // compute x,y coordinate on circumference of circle
+        // n = number of methods
+        int n = numMethods;
+        System.out.println(numMethods);
+        for (int i = 0; i < n; i++) {
+            double methodLineX = classCircle.getCenterX() + classCircle.getRadius() * Math.cos(Math.PI * 2 * i / n);
+            double methodLineY = classCircle.getCenterY() + classCircle.getRadius() * Math.sin(Math.PI * 2 * i / n);
+            Circle pt = new Circle(methodLineX ,methodLineY, 3.0);
+            pt.setFill(Color.BLACK);
+            canvas.getChildren().add(pt);
+
+            Line methodLine = new Line(methodLineX, methodLineY, xPos, yPos);
+            if (!isPublic) {
+                methodLine.setEndX(xPos + C_SQUARE_SIZE / 2);
+                methodLine.setEndY(yPos + C_SQUARE_SIZE / 2);
+            }
+            methodLine.setStrokeWidth(2.5);
+            canvas.getChildren().add(methodLine);
+
         }
-        methodLine.setStrokeWidth(2.5);
 
         TextObject textObj = new TextObject(xPos, yPos, methodName);
 
-        canvas.getChildren().addAll(methodLine, methodShape);  // not able to display text
-        // textObj.getText()
+        canvas.getChildren().add(methodShape);
 
         registerHandler(canvas, methodShape, Color.GREY, Color.GREY, textObj.getText());
     }
@@ -188,6 +206,10 @@ public class Visualizer {
     }
 
     private void connectClasses(AnchorPane canvas, Circle superClass, Circle subClass) {
+        // Create the Hexagon for every  class
+        Polygon hexagon = createHexagon(superClass);
+        canvas.getChildren().add(hexagon);
+
         Path path = new Path();
 
         double c1X = superClass.getCenterX();
@@ -214,12 +236,9 @@ public class Visualizer {
         path.setStrokeWidth(5);
         path.setStroke(EXTENDS_COLOR);
 
-        // Create the Hexagon for every  class
-        Polygon hexagon = createHexagon(superClass);
+        canvas.getChildren().add(path);
 
         registerHandlerExtends(superClass, hexagon, path);
-
-        canvas.getChildren().addAll(hexagon, path);
 
     }
 

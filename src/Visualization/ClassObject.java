@@ -33,16 +33,15 @@ public class ClassObject {
         xPos = classCircle.getCenterX();
         yPos = classCircle.getCenterY();
 
-        canvas.getChildren().addAll(classCircle);
-
         // step 2: text for class name
         className = new TextObject(xPos, yPos, name);
+
+        canvas.getChildren().addAll(classCircle, className.getText());
     }
 
     private Circle createClassShape(double x, double y) {
         Circle circle = createCircle(x, y, P_CIRCLE_RADIUS, Color.PEACHPUFF);
         checkCollision(circle);
-        //parentClasses.add(circle);
         return circle;
     }
 
@@ -96,9 +95,7 @@ public class ClassObject {
 //        System.out.println("currCircle.getCenterX() & .getCenterY(): [" + currCircle.getCenterX() + ", " + currCircle.getCenterY() + "]" );
 //        System.out.println("-------------------");
 
-        boolean hasCollided = (distance < minDist);
-        System.out.println(hasCollided);
-        return hasCollided;
+        return (distance < minDist);
     }
 
     public Circle getClassCircle() {
